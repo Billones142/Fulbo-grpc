@@ -1,0 +1,2 @@
+entrenador:
+    *cuando es argentino no se le da 10k 

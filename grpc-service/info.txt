@@ -1,0 +1,6 @@
+a tener en cuenta:
+el proyecto de interfaces funciona como una biblioteca para otros proyectos de java,
+asi que lo que realmente importa es el archivo proto en ese proyecto (y el pom para que maven sepa como compilarlo),
+cada vez que se modifica el archivo proto hay que volver a "compilar" las clases
+esto se hace con el comando "mvn clean install -DskipTest" dentro de la carpeta de interfaces
+y es solamente requerido cuando se modifica el archivo proto
