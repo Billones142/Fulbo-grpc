@@ -1,7 +1,5 @@
 package com.grpcServicio.servicioFulbo.services;
 
-import com.grpc.fulbo.ChatServiceGrpc.ChatServiceImplBase;
-
 import java.util.Random;
 
 import org.lognet.springboot.grpc.GRpcService;
@@ -19,6 +17,7 @@ import com.grpcServicio.servicioFulbo.MultiplesRespuestasStream;
 import com.grpc.fulbo.RecibirMensaje;
 import com.grpc.fulbo.EnviarMensaje;
 import com.grpc.fulbo.IntegranteSeleccion_gRPC;
+import com.grpc.fulbo.ChatServiceGrpc.ChatServiceImplBase;
 
 // clases de Fulbo
 import fulbo.ucp.*;
@@ -59,7 +58,7 @@ public class ChatService extends ChatServiceImplBase {
                                     nuevoIntegrante.getApellido(),
                                     nuevoIntegrante.getHijos(),
                                     nuevoIntegrante.getSueldoBasico(),
-                                    /*nuevoIntegrante.getJugador().getPosicionTactica()*/"",
+                                    nuevoIntegrante.getJugador().getPosicionTactica(),
                                     nuevoIntegrante.getJugador().getPremio());
         }else if(nuevoIntegrante.hasEntrenador()){
             rol= "Entrenador";

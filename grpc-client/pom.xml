@@ -17,7 +17,7 @@
 
 	<description>Demo project for Spring Boot</description>
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 
@@ -59,8 +59,13 @@
 			<version>4.7.1</version>
 		</dependency>
 		<dependency>
-			<groupId>com.faxterol.grpcdemo</groupId>
+			<groupId>com.grpcInterfaces.fulbo</groupId>
 			<artifactId>grpc-interfaces</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>fulbo.ucp</groupId>
+			<artifactId>Fulbo</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 
