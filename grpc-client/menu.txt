@@ -1,0 +1,29 @@
+el menu te va a permitir enviar los datos al servidor mediante una linea de comandos
+
+opciones
+    menu principal:
+        *editar seleccion AFA (si ya existe)
+        *crear nueva Seleccion AFA
+        *enviar Ping
+
+    menu crear seleccion:
+        *volver
+        *agregar integrante
+            menu agregar integrante:
+                *Jugador
+                *Entenador
+                *masajista
+        *modificar integrantes
+        *agregar presidente
+
+
+    menu editar seleccion:
+        *modificar director tecnico
+        *modificar integrantes
+
+    
+    menu modificar integrantes:
+        (no se puede modificar el tipo de integrante)
+        integrante:
+            *eliminar
+            *editar datos
