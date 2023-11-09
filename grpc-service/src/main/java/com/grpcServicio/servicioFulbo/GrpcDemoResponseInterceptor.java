@@ -38,7 +38,7 @@ public class GrpcDemoResponseInterceptor implements ServerInterceptor {
         @Override
         public void sendHeaders(Metadata headers) {
             //Agregamos metadatos antes de enviar la respuesta. 
-            headers.put(Metadata.Key.of("MI-METADATO", Metadata.ASCII_STRING_MARSHALLER),"HolaMundoServer");
+            headers.put(Metadata.Key.of("MI-METADATO", Metadata.ASCII_STRING_MARSHALLER),"Servidor de Fulbo");
             super.sendHeaders(headers);
         }
     }

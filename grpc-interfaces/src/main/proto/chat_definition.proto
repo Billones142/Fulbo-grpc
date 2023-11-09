@@ -14,6 +14,7 @@ service ChatService {
     //Definición de un método, comunicación unaria
     rpc ping (Peticion) returns (RecibirMensaje) {}
     rpc enviarPeticion (Peticion) returns  (RecibirMensaje) {}
+    rpc enviarPeticionDeDatos (Peticion) returns  (datosDePeticion) {}
     rpc enviarPeticiones (stream Peticion) returns  (stream RecibirMensaje) {}
     
     /* ejemplos
@@ -38,7 +39,11 @@ message Peticion {
 
 //Objeto de tipo mensaje, es lo que va a responder un método.
 message RecibirMensaje {
-    string message = 2;
+    string message = 1;
+}
+
+message datosDePeticion {
+    repeated string message = 1;
 }
 
 message IntegranteSeleccion_gRPC {

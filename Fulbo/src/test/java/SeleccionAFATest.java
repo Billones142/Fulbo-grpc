@@ -2,9 +2,9 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import fulbo.ucp.Entrenador;
+//import fulbo.ucp.Entrenador;
 import fulbo.ucp.Jugador;
-import fulbo.ucp.Masajista;
+//import fulbo.ucp.Masajista;
 import fulbo.ucp.SeleccionAFA;
 
 

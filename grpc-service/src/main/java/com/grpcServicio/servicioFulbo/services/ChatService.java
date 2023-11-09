@@ -27,6 +27,7 @@ import fulbo.ucp.interfaces.*;
 
 @GRpcService
 public class ChatService extends ChatServiceImplBase {
+    SeleccionAFA seleccion;
 
     @Override
     public void ping(Peticion request, StreamObserver<RecibirMensaje> responseObserver) {
