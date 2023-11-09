@@ -18,7 +18,7 @@ public class MultiplesMensajesStream implements StreamObserver<Peticion>{
 
     @Override
     public void onNext(Peticion value) {
-        System.out.println("MultiplesMensajesStream - Nuevo mensaje recibido: "+value);
+        System.out.println("MultiplesMensajesStream - Nueva peticion recibida: "+value.getMessage());
         
     }
 
@@ -32,7 +32,7 @@ public class MultiplesMensajesStream implements StreamObserver<Peticion>{
     public void onCompleted() {
         //Los streams unidireccionales de cliente a servidor, solo requieren una respuesta del servidor.
         RecibirMensaje respuesta = RecibirMensaje.newBuilder()
-                                    .setMessage("Hola mundo desde el servidor: "+random.nextInt())
+                                    .setMessage("Hola mundo desde el servidor: "+ "1")
                                     .build();
 
         this.responseObserver.onNext(respuesta);

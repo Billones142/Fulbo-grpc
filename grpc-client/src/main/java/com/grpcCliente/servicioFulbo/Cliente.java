@@ -35,19 +35,6 @@ public class Cliente {
 		.build();
 
         RecibirMensaje respuesta = blockingStub.ping(peticion);
-		System.out.println(respuesta.getMessage());
 		return respuesta;
     }
-
-
-	public void limpiarTerminal() {
-		String osName = System.getProperty("os.name");
-		try {
-			if (osName.contains("Windows")) {
-		Runtime.getRuntime().exec("cls");
-		} else {
-		Runtime.getRuntime().exec("clear");
-		}
-		} catch (Exception e) {}
-	}
 }
