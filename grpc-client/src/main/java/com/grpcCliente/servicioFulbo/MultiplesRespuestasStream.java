@@ -2,8 +2,8 @@ package com.grpcCliente.servicioFulbo;
 
 import java.util.Random;
 
-import com.grpc.fulbo.EnviarMensaje;
-import com.grpc.fulbo.RecibirMensaje;
+import com.grpcInterfaces.fulbo.EnviarMensaje;
+import com.grpcInterfaces.fulbo.RecibirMensaje;
 
 import io.grpc.stub.StreamObserver;
 

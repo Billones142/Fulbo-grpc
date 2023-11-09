@@ -14,10 +14,10 @@ import com.grpcServicio.servicioFulbo.MultiplesMensajesStream;
 import com.grpcServicio.servicioFulbo.MultiplesRespuestasStream;
 
 // interfaces gRCP
-import com.grpc.fulbo.RecibirMensaje;
-import com.grpc.fulbo.EnviarMensaje;
-import com.grpc.fulbo.IntegranteSeleccion_gRPC;
-import com.grpc.fulbo.ChatServiceGrpc.ChatServiceImplBase;
+import com.grpcInterfaces.fulbo.RecibirMensaje;
+import com.grpcInterfaces.fulbo.EnviarMensaje;
+import com.grpcInterfaces.fulbo.IntegranteSeleccion_gRPC;
+import com.grpcInterfaces.fulbo.ChatServiceGrpc.ChatServiceImplBase;
 
 // clases de Fulbo
 import fulbo.ucp.*;
@@ -29,16 +29,19 @@ import fulbo.ucp.interfaces.*;
 public class ChatService extends ChatServiceImplBase {
 
     @Override
-    public void enviarMensaje(EnviarMensaje request, StreamObserver<RecibirMensaje> responseObserver) {
+    public void ping(EnviarMensaje request, StreamObserver<RecibirMensaje> responseObserver) {
         //Crea la respuesta
         RecibirMensaje response = RecibirMensaje.newBuilder()
                                         .setFrom(1)
-                                        .setMessage("Hello back!")
+                                        .setMessage("pong")
                                         .build();
 
 
         //Envia el mensaje
-        responseObserver.onNext(response);
+        if (request.getTo() == 1) {
+            responseObserver.onNext(response);
+        }
+        
 
         //Cierra la conexión
         responseObserver.onCompleted();
@@ -79,14 +82,14 @@ public class ChatService extends ChatServiceImplBase {
         responseObserver.onCompleted();
     }
 
-    @Override
+    /*@Override
     public StreamObserver<EnviarMensaje> enviarMultiplesMensajes(StreamObserver<RecibirMensaje> responseObserver) {
         return new MultiplesMensajesStream(responseObserver);
         /*
          * Una solución alternativa es crear una clase anomina, esto es hacer el new StreamObserver e implementar los métodos necesarios. 
          */
         //return new StreamObserver<EnviarMensaje>(){} 
-    }
+    /*}
 
     @Override
     public StreamObserver<EnviarMensaje> enviarRecibirMultiplesMensajes(StreamObserver<RecibirMensaje> responseObserver) {
@@ -106,6 +109,5 @@ public class ChatService extends ChatServiceImplBase {
         }
 
         responseObserver.onCompleted();
-    }
-    
+    }*/
 }

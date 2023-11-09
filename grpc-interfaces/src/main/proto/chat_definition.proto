@@ -10,7 +10,7 @@ option java_package = "com.grpcInterfaces.fulbo"; //El paquete java donde se van
 option java_outer_classname = "ChatServiceFulbo"; //Es el nombre de la clase que se va a generar para este archivo proto y que necesita el compilador para generar las interfaces. Si no es definido, entonces se va a tomar el nombre del archivo en formato camel case. 
 
 //Definición de un servicio
-service ServicioFulbo {
+service ChatService {
     //Definición de un método, comunicación unaria
     rpc ping (EnviarMensaje) returns (RecibirMensaje) {}
     /* ejemplos
