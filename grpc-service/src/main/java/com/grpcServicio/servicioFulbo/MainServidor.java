@@ -7,11 +7,11 @@ import org.springframework.context.annotation.Bean;
 import fulbo.ucp.SeleccionAFA;
 
 @SpringBootApplication
-public class Servidor {
+public class MainServidor {
 	SeleccionAFA seleccion;
 
 	public static void main(String[] args) {
-		SpringApplication.run(Servidor.class, args);
+		SpringApplication.run(MainServidor.class, args);
 		System.console().readLine();
 	}
 }

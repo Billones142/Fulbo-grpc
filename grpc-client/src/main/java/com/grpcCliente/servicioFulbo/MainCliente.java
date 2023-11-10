@@ -1,6 +1,6 @@
 package com.grpcCliente.servicioFulbo;
 
-public class Main {
+public class MainCliente {
 
     public static void main(String[] args) {
         while (true) {
