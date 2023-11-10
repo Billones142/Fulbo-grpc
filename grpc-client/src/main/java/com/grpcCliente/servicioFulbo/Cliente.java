@@ -10,54 +10,74 @@ import com.grpcInterfaces.fulbo.RecibirMensaje;
 import com.grpcInterfaces.fulbo.SeleccionAFA_gRPC;
 import com.grpcInterfaces.fulbo.SeleccionAFA_gRPC.Builder;
 
-import fulbo.ucp.SeleccionAFA;
 import io.grpc.Channel;
 import io.grpc.ManagedChannelBuilder;
 
 
-@SpringBootApplication
+
 public class Cliente {
 	private Channel channel;
     private ChatServiceGrpc.ChatServiceBlockingStub blockingStub;
 
-	Builder seleccionAFA;
+	Builder seleccionAFA= null;
 
 	/******************************Inicio de menus******************************/
 
-	public void menuPrincipal() {
+	public boolean menuPrincipal() {
 		// TODO: agregar que resetee la terminal
-		
+
 		enviarMensaje("ping"); // ping para verificar la coneccion con el servidor
 
         System.out.println("Elija una opcion\r\n" + //
-                            "1. editar seleccion AFA (si ya existe)\r\n" + //
-                            "2. crear nueva Seleccion AFA\r\n" + //
-                            "3. enviar Ping\n\r" + //
-							"4. terminar comunicacion con el servidor");
-        int eleccion= Integer.parseInt(System.console().readLine());
+							"1. Enviar Ping\n\r" + //
+                            "2. Crear nueva Seleccion AFA\r\n" + //
+                            "3. Editar seleccion AFA (si ya existe)\r\n" + //
+							"4. Borrar datos de la seleccion\n\r" + //
+							"5. Terminar comunicacion con el servidor");
+		int eleccion= 0;
+		try {
+			eleccion= Integer.parseInt(System.console().readLine());
+		} catch (Exception e) {
+			System.out.println("No se ingreso un numero valido.");
+		}
 
 		switch (eleccion) {
 			case 1:
-				menuEditarSeleccion();
+				ping();
+				menuPrincipal();
 				break;
 
 			case 2:
 				menuCrearSeleccion();
 				break;
 
-			case 3:
-				ping();
-				menuPrincipal();
+			case 3: 
+				if (seleccionAFA != null) {
+					menuEditarSeleccion();
+				}else{ // si no existe volver al menu
+					eleccion= 0;
+				}
+				break;
+			
+			case 4:
 				break;
 
-			case 4:
+			case 5:
+				if (seleccionAFA != null) {
+					seleccionAFA= null;
+					menuPrincipal();
+				}else{ // si no existe volver al menu
+					eleccion= 0;
+				}
 				break;
 		
 			default:
-				System.out.println("No selecciono una opcion valida");
+				System.out.println("No selecciono una opcion valida.");
 				menuPrincipal();
 				break;
 		}
+
+		return false;
     }
 
 	public void menuEditarSeleccion(){
@@ -76,7 +96,7 @@ public class Cliente {
 							"2. No");
 		int eleccionAgregrarIntegrante= Integer.parseInt(System.console().readLine());
 		if (eleccionAgregrarIntegrante == 1) {
-			//menuAgregarIntegrante();
+			menuAgregarIntegrante();
 		}
 
 		System.out.println("termino de ingresar los datos para su nueva seleccion, quiere enviarla al servidor?\r\n" + //
@@ -87,8 +107,16 @@ public class Cliente {
 
 		if (eleccionEnviarSeleccion == 1) {
 			seleccionAFA= nuevaSeleccion;
-			blockingStub.enviarSeleccion(nuevaSeleccion.build());
+			String respuestaServer= blockingStub.enviarSeleccion(nuevaSeleccion.build()).getMessage();
+			System.out.println("respuesta del servidor" + respuestaServer);
+		}else if (eleccionEnviarSeleccion == 2) {
+			System.out.println("los datos quedaran guardados, puede borrarlos si quiere");
+			menuPrincipal();
 		}
+	}
+
+	private void menuAgregarIntegrante() {
+
 	}
 
 	/******************************Fin de menus******************************/
