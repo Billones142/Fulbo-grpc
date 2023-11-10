@@ -1,8 +1,20 @@
 package com.grpcCliente.servicioFulbo;
 
+//import org.apache.log4j.Logger;
+//import org.apache.log4j.Level;
+//import org.apache.log4j.NullAppender;
+
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+
+
+@SpringBootApplication
 public class MainCliente {
 
     public static void main(String[] args) {
+        //Logger.getRootLogger().setLevel(Level.OFF);
+        
+
         String host= "localhost";
         int port= 6999;
 
@@ -26,16 +38,17 @@ public class MainCliente {
                 Cliente client = new Cliente(host, port);
                 seguirEjecutando= client.menuPrincipal();
             } catch (Exception e) {
+                Cliente.borrarTerminal();
                 System.out.print("no se pudo establecer la conexion con el servidor\r\n" + //
-                "reintentado en 3 segundos");
+                "reintentado en 3 segundos.");
                 try {
                     for (int i = 0; i < 3; i++) {
-                        System.out.print(".");
                         Thread.sleep(1000);
+                        System.out.print(".");
                     }
-                    } catch (InterruptedException a) {
+                } catch (InterruptedException a) {
                     Thread.currentThread().interrupt();
-                    }
+                }
                     System.out.println();
             }
         }

@@ -13,9 +13,11 @@ import io.grpc.stub.StreamObserver;
 
 // interfaces gRCP
 import com.grpcInterfaces.fulbo.RecibirMensaje;
+import com.grpcInterfaces.fulbo.SeleccionAFA_gRPC;
 import com.grpcInterfaces.fulbo.Peticion;
+import com.grpcInterfaces.fulbo.ServicioFulboGrpc.ServicioFulboImplBase;
 import com.grpcInterfaces.fulbo.IntegranteSeleccion_gRPC;
-import com.grpcInterfaces.fulbo.ChatServiceGrpc.ChatServiceImplBase;
+
 
 // clases de Fulbo
 import fulbo.ucp.*;
@@ -24,7 +26,8 @@ import fulbo.ucp.interfaces.*;
 
 
 @GRpcService
-public class ChatService extends ChatServiceImplBase {
+public class ServicioFulbo extends ServicioFulboImplBase {
+
     SeleccionAFA seleccion;
 
     @Override
@@ -48,31 +51,17 @@ public class ChatService extends ChatServiceImplBase {
         responseObserver.onCompleted();
     }
 
-    @Override
-    public void enviarIntegrante (IntegranteSeleccion_gRPC nuevoIntegrante, StreamObserver<RecibirMensaje> responseObserver) {
-        // es capaz de recivir un integrante y devolver un mesaje de acuerdo los datos
-
-        IintegranteSeleccion integrante= crearIntegrante(nuevoIntegrante);
-        
-        String rol= "";
-        if(nuevoIntegrante.hasJugador()){
-            rol= "Jugador";
-        }else if(nuevoIntegrante.hasEntrenador()){
-            rol= "Entrenador";
-        }else if(nuevoIntegrante.hasMasajista()){
-            rol= "Masajista";
+    public SeleccionAFA crearSeleccion(SeleccionAFA_gRPC seleccionMensaje) { //TODO
+        SeleccionAFA nuevaSeleccion= new SeleccionAFA(seleccionMensaje.getPresidente());
+        for (int i = 0; i < seleccionMensaje.getSeleccionadoCount(); i++) {
+            nuevaSeleccion.agregarIntegrante(
+                                crearIntegrante(
+                                    seleccionMensaje.getSeleccionado(i))
+            );
         }
 
-        String mensaje= "nuevo Integrante: " + nuevoIntegrante.getNombre() + " " + nuevoIntegrante.getApellido() + ", " + rol;
 
-
-        RecibirMensaje response = RecibirMensaje.newBuilder()
-                                        .setMessage(mensaje)
-                                        .build();
-        
-        responseObserver.onNext(response);
-
-        responseObserver.onCompleted();
+        return nuevaSeleccion;
     }
 
     public IintegranteSeleccion crearIntegrante(IntegranteSeleccion_gRPC nuevoIntegrante) {

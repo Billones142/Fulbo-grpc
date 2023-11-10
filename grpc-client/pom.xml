@@ -8,6 +8,11 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>fulboGRPC</name>
 
+	<systemPropertyVariables>
+    <io.netty.logging.level>OFF</io.netty.logging.level>
+	<Dio.netty.logging.level>OFF</Dio.netty.logging.level>
+	</systemPropertyVariables>
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -68,6 +73,22 @@
 			<artifactId>Fulbo</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
+
+		<dependencies>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-nop</artifactId>
+				<version>1.7.36</version>
+			</dependency> 
+		</dependencies>
+
+		<dependencies>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.7.30</version>
+			</dependency>
+		</dependencies>
 
 		<!-- Si usas Java 11, este paquete no viene de forma nativa, incluyelo en tu pom file -->
 		<dependency>

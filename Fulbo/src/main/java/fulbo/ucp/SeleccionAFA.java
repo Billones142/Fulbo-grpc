@@ -2,14 +2,17 @@ package fulbo.ucp;
 
 import java.util.ArrayList;
 
+import fulbo.ucp.interfaces.IintegranteSeleccion;
+
 public class SeleccionAFA {
     public SeleccionAFA(String pPresidente) {
         super();
         setPresidente(pPresidente);
     }
 
-    private ArrayList<IntegranteSeleccion> seleccionado= new ArrayList<>();
+    private ArrayList<IintegranteSeleccion> seleccionado= new ArrayList<>();
     private String presidente;
+    private String pais;
 
     /********************Comienzo encapsulacion********************/
     private void setPresidente(String presidente) {
@@ -20,14 +23,26 @@ public class SeleccionAFA {
         return presidente;
     }
 
-    public void setSeleccionado(ArrayList<IntegranteSeleccion> seleccionado) {
+    public void setSeleccionado(ArrayList<IintegranteSeleccion> seleccionado) {
         this.seleccionado = seleccionado;
     }
 
-    public ArrayList<IntegranteSeleccion> getSeleccionado() {
+    public ArrayList<IintegranteSeleccion> getSeleccionado() {
         return seleccionado;
     }
+
+    public void setPais(String pais) {
+        this.pais = pais;
+    }
+
+    public String getPais() {
+        return pais;
+    }
     /**********************Fin encapsulacion**********************/
+
+    public void agregarIntegrante(IintegranteSeleccion pIntegrante) {
+        getSeleccionado().add(pIntegrante);
+    }
 
     public void agregarIntegrante(IntegranteSeleccion pIntegrante) {
         getSeleccionado().add(pIntegrante);
@@ -51,7 +66,7 @@ public class SeleccionAFA {
                             "--------------------------------------------------------------------------------------\r\n");
 
         for (int i = 0; i < getSeleccionado().size(); i++) {
-            IntegranteSeleccion integrante= getSeleccionado().get(i);
+            IintegranteSeleccion integrante= getSeleccionado().get(i);
 
             sueldosCompletos.append(integrante.mostrarDatos());
 
@@ -81,7 +96,7 @@ public class SeleccionAFA {
         if (indiceDeJugador == -1) {
             return "El nombre ingresado no pertenece a un integrante de la selección.";
         }else{
-            IntegranteSeleccion integrante= getSeleccionado().get(indiceDeJugador);
+            IintegranteSeleccion integrante= getSeleccionado().get(indiceDeJugador);
             // “Integrante: Apellido, Nombre - Rol que cumple: rol.”
             return "Integrante: " + integrante.getApellido() + ", " + 
             integrante.getNombre() + " - Rol que cumple: " + integrante.rolEntrenamiento() + ".";

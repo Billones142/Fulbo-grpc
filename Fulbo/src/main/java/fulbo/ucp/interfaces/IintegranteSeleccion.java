@@ -7,4 +7,5 @@ public interface IintegranteSeleccion {
     public double getSueldoBasico();
     public String rolEntrenamiento();
     public String mostrarDatos();
+    public double sueldoNeto();
 }

@@ -7,27 +7,16 @@ package com.grpcInterfaces.fulbo;
 //Estas son como variables que le indicamos al compilador protoc, las opciones dependen de cada lenguaje.
 option java_multiple_files = true; //Si es falso, se van a crear un solo archivo en el cual va a venir todo el código java generado
 option java_package = "com.grpcInterfaces.fulbo"; //El paquete java donde se van a crear las interfaces
-option java_outer_classname = "ChatServiceFulbo"; //Es el nombre de la clase que se va a generar para este archivo proto y que necesita el compilador para generar las interfaces. Si no es definido, entonces se va a tomar el nombre del archivo en formato camel case. 
+option java_outer_classname = "ServiceFulbo"; //Es el nombre de la clase que se va a generar para este archivo proto y que necesita el compilador para generar las interfaces. Si no es definido, entonces se va a tomar el nombre del archivo en formato camel case. 
 
 //Definición de un servicio
-service ChatService {
+service ServicioFulbo {
     //Definición de un método, comunicación unaria
     rpc ping (Peticion) returns (RecibirMensaje) {}
     rpc enviarPeticion (Peticion) returns  (RecibirMensaje) {}
     rpc enviarPeticionDeDatos (Peticion) returns  (datosDePeticion) {}
-    rpc enviarPeticiones (stream Peticion) returns  (stream RecibirMensaje) {}
-    
-    /* ejemplos
-    //Stream unidireccional cliente a servidor
-    rpc enviarMultiplesMensajes (stream EnviarMensaje) returns (RecibirMensaje) {}
-    //Stream unidireccional servidor a cliente
-    rpc recibirMultiplesRespuestas (EnviarMensaje) returns (stream RecibirMensaje) {}
-    //Stream bidireccional
-    rpc enviarRecibirMultiplesMensajes (stream EnviarMensaje) returns (stream RecibirMensaje) {}
-    */
 
     // envio de objetos
-    rpc enviarIntegrante (IntegranteSeleccion_gRPC) returns (RecibirMensaje) {}
     rpc enviarSeleccion (SeleccionAFA_gRPC) returns (RecibirMensaje) {}
 }
 
