@@ -16,6 +16,7 @@ import com.grpcInterfaces.fulbo.RecibirMensaje;
 import com.grpcInterfaces.fulbo.SeleccionAFA_gRPC;
 import com.grpcInterfaces.fulbo.Peticion;
 import com.grpcInterfaces.fulbo.ServicioFulboGrpc.ServicioFulboImplBase;
+import com.grpcInterfaces.fulbo.DatosDePeticion;
 import com.grpcInterfaces.fulbo.Entrenador_gRPC;
 import com.grpcInterfaces.fulbo.IntegranteSeleccion_gRPC;
 import com.grpcInterfaces.fulbo.Jugador_gRPC;
@@ -65,6 +66,39 @@ public class ServicioFulbo extends ServicioFulboImplBase {
             responseObserver.onNext(jugador);
         }
         
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void peticionDeDatos(Peticion peticion, StreamObserver<DatosDePeticion> responseObserver) {
+        if (peticion.getTo() != 1) {
+            return;
+        }
+
+        String request= peticion.getMessage();
+
+        DatosDePeticion.Builder datosAenviar= DatosDePeticion.newBuilder();
+
+        if (request.startsWith("liquidar sueldos")) {
+            String[] datos= seleccion.liquidarSueldos().split("\r\n");
+
+            for (String linea : datos) {
+                datosAenviar.addMessage(linea);                
+            }
+
+        }else if (request.startsWith("solicitar nomina")) {
+            String[] datos= seleccion.mostrarNomina().split("\r\n");
+
+            for (String linea : datos) {
+                datosAenviar.addMessage(linea);                
+            }
+
+        }/*else if (request.startsWith("sueldo neto de jugador: ")) {
+            int index= Integer.parseInt(request.split("jugador: ")[2]);
+        }*/
+
+        responseObserver.onNext(datosAenviar.build());
+
         responseObserver.onCompleted();
     }
     

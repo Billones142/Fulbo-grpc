@@ -121,7 +121,7 @@ public class Cliente {
 		borrarTerminal();
 		System.out.println("Que peticion quiere hacer al servidor?\r\n" + //
 							"1. liquidar sueldos\r\n" + //
-							"2. solicitar sueldos\r\n" + //
+							"2. solicitar nomina\r\n" + //
 							"3. sueldo neto de jugador");
 
 		int eleccionPeticion;

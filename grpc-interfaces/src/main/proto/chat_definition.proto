@@ -14,7 +14,7 @@ service ServicioFulbo {
     //Definición de un método, comunicación unaria
     rpc ping (Peticion) returns (RecibirMensaje) {}
     rpc peticionDeIntegrantes (Peticion) returns (stream IntegranteSeleccion_gRPC) {}
-    rpc PeticionDeDatos (Peticion) returns  (datosDePeticion) {}
+    rpc peticionDeDatos (Peticion) returns  (DatosDePeticion) {}
 
     // envio de objetos
     rpc enviarSeleccion (SeleccionAFA_gRPC) returns (RecibirMensaje) {}
@@ -31,7 +31,7 @@ message RecibirMensaje {
     string message = 1;
 }
 
-message datosDePeticion {
+message DatosDePeticion {
     repeated string message = 1;
 }
 
