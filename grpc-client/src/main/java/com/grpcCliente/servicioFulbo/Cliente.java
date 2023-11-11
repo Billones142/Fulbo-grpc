@@ -14,7 +14,6 @@ import com.grpcInterfaces.fulbo.RecibirMensaje;
 import com.grpcInterfaces.fulbo.SeleccionAFA_gRPC;
 import com.grpcInterfaces.fulbo.ServicioFulboGrpc;
 
-import fulbo.ucp.Masajista;
 import io.grpc.Channel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -25,6 +24,8 @@ public class Cliente {
     private ServicioFulboGrpc.ServicioFulboBlockingStub blockingStub;
 
 	SeleccionAFA_gRPC.Builder seleccionAFA= null;
+	ConsoleEraser eraser;
+	String respuestaDelServidor= null;
 
 	/******************************Inicio de menus******************************/
 
@@ -37,6 +38,8 @@ public class Cliente {
 	}
 
 	public boolean menuPrincipal(boolean limpiarTerminal, String mensajeAmostrar) {
+		enviarMensaje("ping"); // ping para verificar la coneccion con el servidor
+
 
 		if (limpiarTerminal) {
 			borrarTerminal();
@@ -46,16 +49,22 @@ public class Cliente {
 			System.out.println(mensajeAmostrar);
 		}
 
-		enviarMensaje("ping"); // ping para verificar la coneccion con el servidor
+		if (respuestaDelServidor != null) {
+			System.out.println("Respuesta del servidor: ");
+			System.out.println(respuestaDelServidor);
+			System.out.println();
+			respuestaDelServidor= null;
+		}
 
         System.out.println("Elija una opcion\r\n" + //
 							"1. Enviar Ping\n\r" + //
-                            "2. Crear nueva Seleccion AFA");
+                            "2. Crear nueva Seleccion FIFA\n\r" + 
+							"3. Hacer peticion al servidor");
 		if (seleccionAFA != null) {
 			System.out.println("3. Enviar seleccion guardada\r\n" + //
-								"4. Editar seleccion AFA (si ya existe)\r\n"+
+								"4. Editar seleccion FIFA\r\n"+
 								"5. Borrar datos de la seleccion\n\r" + //
-								"6. Terminar comunicacion con el servidor"); //TODO: hacer peticion de datos
+								"6. Terminar comunicacion con el servidor");
 		}
 		int eleccion= 0;
 		try {
@@ -72,11 +81,15 @@ public class Cliente {
 			case 2: // Crear nueva Seleccion AFA
 				return menuCrearSeleccion();
 
-			case 3:
+			case 4:
+				menuHacerPeticion();
+				break;
+
+			case 5:
 				enviarSeleccion();
 				return menuPrincipal();
 
-			case 4: 
+			case 6: 
 				if (seleccionAFA != null) {
 					menuEditarSeleccion();
 				}else{
@@ -84,7 +97,7 @@ public class Cliente {
 				}
 				break;
 
-			case 5:
+			case 7:
 				if (seleccionAFA != null) {
 					seleccionAFA= null;
 					return menuPrincipal();
@@ -93,7 +106,7 @@ public class Cliente {
 				}
 				break;
 
-			case 6: // termina la comunicacion con el servidor ya que retorna false si no se hace nada
+			case 8: // termina la comunicacion con el servidor ya que retorna false si no se hace nada
 				break;
 
 			default:
@@ -104,12 +117,16 @@ public class Cliente {
     }
 	
 	
-	public boolean menuEditarSeleccion(){
+	private void menuHacerPeticion() { //TODO
+		
+	}
+
+	public boolean menuEditarSeleccion(){ //TODO
 		System.out.println();
 		return false;
 	}
 
-	public void menuEditarIntegrantes() { //TODO
+	public void menuEditarIntegrantes() {
 		borrarTerminal();
 		System.out.println("Elija una opcion:\r\n" + //
 							"1. Volver" +
@@ -159,21 +176,27 @@ public class Cliente {
 		}
 	}
 	
-	
-	public boolean menuCrearSeleccion() { //TODO
+	public boolean menuCrearSeleccion() {
+		borrarTerminal();
 		SeleccionAFA_gRPC.Builder nuevaSeleccion= SeleccionAFA_gRPC.newBuilder();
 		
 		System.out.println("Cual es el apellido de su presidente?");
 		String apellidoPresidente= System.console().readLine();
 		nuevaSeleccion.setPresidente(apellidoPresidente);
 		
-		System.out.println("quieres agregar un integrante? \r\n" + //
-		"1. Si\r\n" + //
-		"2. No");
-		int eleccionAgregrarIntegrante= Integer.parseInt(System.console().readLine());
-		if (eleccionAgregrarIntegrante == 1) {
-			menuAgregarIntegrante();
+		boolean seguirAgregandoIntegrantes= true;
+		while (seguirAgregandoIntegrantes) {
+			System.out.println("quieres agregar un integrante? \r\n" + //
+			"1. Si\r\n" + //
+			"2. No");
+			int eleccionAgregrarIntegrante= Integer.parseInt(System.console().readLine());
+			if (eleccionAgregrarIntegrante == 1) {
+				menuAgregarIntegrante();
+			}else{
+				seguirAgregandoIntegrantes= false;
+			}
 		}
+
 		
 		System.out.println("termino de ingresar los datos para su nueva seleccion, quiere enviarla al servidor?\r\n" + //
 		"1. Si\r\n" + //
@@ -192,7 +215,7 @@ public class Cliente {
 		return menuPrincipal();
 	}
 
-	private IntegranteSeleccion_gRPC.Builder menuCrearBorrarIntegrante() {
+	private IntegranteSeleccion_gRPC.Builder menuCrearEditarIntegrante() {
 		borrarTerminal();
 		IntegranteSeleccion_gRPC.Builder nuevoIntegrante= IntegranteSeleccion_gRPC.newBuilder();
 	
@@ -212,7 +235,7 @@ public class Cliente {
 		nuevoIntegrante.setSueldoBasico(Double.parseDouble(System.console().readLine()));
 		System.out.println();
 	
-		System.out.print("Que tipo de integrante sera?\r\n" + //
+		System.out.println("Que tipo de integrante sera?\r\n" + //
 				"1. Jugador\r\n" + //
 				"2. Entrenador\r\n" + //
 				"3. Masajista");
@@ -260,14 +283,14 @@ public class Cliente {
 	
 		return nuevoIntegrante;
 	}
-	
+
 	private boolean menuAgregarIntegrante(){
-		seleccionAFA.addSeleccionado(menuCrearBorrarIntegrante());
+		seleccionAFA.addSeleccionado(menuCrearEditarIntegrante());
 		return menuPrincipal();
 	}
 	
 		public boolean menuEditarIntegrante(int index) {
-		seleccionAFA.setSeleccionado(index, menuCrearBorrarIntegrante());
+		seleccionAFA.setSeleccionado(index, menuCrearEditarIntegrante());
 		return menuPrincipal();
 		}
 	
@@ -276,12 +299,18 @@ public class Cliente {
     public Cliente(String host, int port) {
 		this.channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
         this.blockingStub = ServicioFulboGrpc.newBlockingStub(channel);
+
+		eraser = new ConsoleEraser();
+		eraser.addIgnoreClass(System.class);
+		eraser.start();
 	}
 	
 	private void ping() {
+		borrarTerminal();
+
 		System.out.println("enviando Ping...");
 		RecibirMensaje respuestaPing= this.enviarMensaje("ping");
-		System.out.println("respuesta del servidor: " + respuestaPing.getMessage());
+		respuestaDelServidor= respuestaPing.getMessage();
 	}
 	
     private RecibirMensaje enviarMensaje(String message) {

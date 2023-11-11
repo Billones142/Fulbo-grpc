@@ -13,7 +13,6 @@ public class MainCliente {
 
     public static void main(String[] args) {
         //Logger.getRootLogger().setLevel(Level.OFF);
-        
 
         String host= "localhost";
         int port= 6999;
