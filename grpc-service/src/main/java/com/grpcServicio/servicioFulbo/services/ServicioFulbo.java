@@ -16,8 +16,10 @@ import com.grpcInterfaces.fulbo.RecibirMensaje;
 import com.grpcInterfaces.fulbo.SeleccionAFA_gRPC;
 import com.grpcInterfaces.fulbo.Peticion;
 import com.grpcInterfaces.fulbo.ServicioFulboGrpc.ServicioFulboImplBase;
+import com.grpcInterfaces.fulbo.Entrenador_gRPC;
 import com.grpcInterfaces.fulbo.IntegranteSeleccion_gRPC;
-
+import com.grpcInterfaces.fulbo.Jugador_gRPC;
+import com.grpcInterfaces.fulbo.Masajista_gRPC;
 
 // clases de Fulbo
 import fulbo.ucp.*;
@@ -51,21 +53,71 @@ public class ServicioFulbo extends ServicioFulboImplBase {
         responseObserver.onCompleted();
     }
 
-    public SeleccionAFA crearSeleccion(SeleccionAFA_gRPC seleccionMensaje) { //TODO
-        SeleccionAFA nuevaSeleccion= new SeleccionAFA(seleccionMensaje.getPresidente());
-        for (int i = 0; i < seleccionMensaje.getSeleccionadoCount(); i++) {
-            nuevaSeleccion.agregarIntegrante(
-                                crearIntegrante(
-                                    seleccionMensaje.getSeleccionado(i))
-            );
+    
+    @Override
+    public void peticionDeIntegrantes(Peticion peticion, StreamObserver<IntegranteSeleccion_gRPC> responseObserver) { //TODO
+        if (peticion.getTo() != 1) {
+            return;
+        }
+        IntegranteSeleccion_gRPC jugador= null;
+        for (int i = 0; i < seleccion.getSeleccionado().size(); i++) {
+            jugador= jugadorAprotocolo(seleccion.getSeleccionado().get(i));
+            responseObserver.onNext(jugador);
+        }
+        
+        responseObserver.onCompleted();
+    }
+    
+    private SeleccionAFA_gRPC seleccionAFAProtocolo(SeleccionAFA seleccionAFA){
+        SeleccionAFA_gRPC.Builder seleccionAenviar= SeleccionAFA_gRPC.newBuilder();
+
+        seleccionAenviar.setPresidente(seleccionAFA.getPresidente());
+        
+        for (int i = 0; i < seleccionAFA.getSeleccionado().size(); i++) {
+            seleccionAenviar.addSeleccionado(jugadorAprotocolo(seleccionAFA.getSeleccionado().get(i)));
+        }
+
+        return seleccionAenviar.build();
+    }
+
+    private IntegranteSeleccion_gRPC jugadorAprotocolo(IintegranteSeleccion integranteSeleccion) {
+        IntegranteSeleccion_gRPC.Builder integranteAenviar= IntegranteSeleccion_gRPC.newBuilder();
+
+        integranteAenviar.setNombre(integranteSeleccion.getNombre());
+        integranteAenviar.setApellido(integranteSeleccion.getApellido());
+        integranteAenviar.setHijos(integranteSeleccion.getHijos());
+        integranteAenviar.setSueldoBasico(integranteSeleccion.getSueldoBasico());
+        
+        if (integranteSeleccion instanceof Jugador) { // si es jugador
+            Jugador jugador= (Jugador)integranteSeleccion;
+            Jugador_gRPC.Builder jugadorAenviar= Jugador_gRPC.newBuilder();
+
+            jugadorAenviar.setPremio(jugador.getPremio());
+            jugadorAenviar.setPosicionTactica(jugador.getPosicionTactica());
+            
+            integranteAenviar.setJugador(jugadorAenviar);
+        }else if (integranteSeleccion instanceof Entrenador) { // si es entrenador
+            Entrenador entrenador= (Entrenador)integranteSeleccion;
+            Entrenador_gRPC.Builder entrenadorAenviar= Entrenador_gRPC.newBuilder();
+            
+            entrenadorAenviar.setNacionalidad(entrenador.getNacionalidad());
+            
+            integranteAenviar.setEntrenador(entrenadorAenviar);
+        }else if (integranteSeleccion instanceof Masajista) { // si es masajista
+            Masajista masajista= (Masajista)integranteSeleccion;
+            Masajista_gRPC.Builder masajistaAenviar= Masajista_gRPC.newBuilder();
+            
+            masajistaAenviar.setTitulacion(masajista.getTitulacion());
+            
+            integranteAenviar.setMasajista(masajistaAenviar);
         }
 
 
-        return nuevaSeleccion;
+        return integranteAenviar.build();
     }
-
+    
     public IintegranteSeleccion crearIntegrante(IntegranteSeleccion_gRPC nuevoIntegrante) {
-        IintegranteSeleccion integrante= null;
+    IintegranteSeleccion integrante= null;
 
         String nombre= nuevoIntegrante.getNombre();
         String apellido= nuevoIntegrante.getApellido();
@@ -93,5 +145,21 @@ public class ServicioFulbo extends ServicioFulboImplBase {
         }
 
         return integrante;
+    }
+
+    private SeleccionAFA crearSeleccion(SeleccionAFA_gRPC seleccionProtocolo) { //TODO
+        SeleccionAFA nuevaSeleccion= new SeleccionAFA(seleccionProtocolo.getPresidente());
+        for (int i = 0; i < seleccionProtocolo.getSeleccionadoCount(); i++) {
+            nuevaSeleccion.agregarIntegrante(
+                                crearIntegrante(
+                                    seleccionProtocolo.getSeleccionado(i))
+            );
+        }
+
+        for (int i = 0; i < seleccionProtocolo.getSeleccionadoCount(); i++) {
+            nuevaSeleccion.agregarIntegrante(crearIntegrante(seleccionProtocolo.getSeleccionado(i)));
+        }
+
+        return nuevaSeleccion;
     }
 }

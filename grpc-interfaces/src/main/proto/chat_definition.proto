@@ -13,8 +13,8 @@ option java_outer_classname = "ServiceFulbo"; //Es el nombre de la clase que se 
 service ServicioFulbo {
     //Definición de un método, comunicación unaria
     rpc ping (Peticion) returns (RecibirMensaje) {}
-    rpc enviarPeticion (Peticion) returns  (RecibirMensaje) {}
-    rpc enviarPeticionDeDatos (Peticion) returns  (datosDePeticion) {}
+    rpc peticionDeIntegrantes (Peticion) returns (stream IntegranteSeleccion_gRPC) {}
+    rpc PeticionDeDatos (Peticion) returns  (datosDePeticion) {}
 
     // envio de objetos
     rpc enviarSeleccion (SeleccionAFA_gRPC) returns (RecibirMensaje) {}

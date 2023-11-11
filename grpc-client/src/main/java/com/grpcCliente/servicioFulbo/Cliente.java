@@ -37,7 +37,7 @@ public class Cliente {
 		return menuPrincipal(true, mensaje);
 	}
 
-	public boolean menuPrincipal(boolean limpiarTerminal, String mensajeAmostrar) {
+	public boolean menuPrincipal(boolean limpiarTerminal, String mensajeAmostrar) { // TODO: ejecutar en un while en vez de ser recursivo
 		enviarMensaje("ping"); // ping para verificar la coneccion con el servidor
 
 
@@ -115,15 +115,55 @@ public class Cliente {
 
 		return false; // si el programa llega a este punto se corta la comunicacion
     }
+
+
+	private boolean menuHacerPeticion() { //TODO: ver peticiones
+		borrarTerminal();
+		System.out.println("Que peticion quiere hacer al servidor?\r\n" + //
+							"1. liquidar sueldos\r\n" + //
+							"2. solicitar sueldos\r\n" + //
+							"3. sueldo neto de jugador");
+
+		int eleccionPeticion;
+		try {
+			eleccionPeticion= Integer.parseInt(System.console().readLine());
+		} catch (Exception e) {
+			eleccionPeticion= 0;
+		}
+
+		switch (eleccionPeticion) {
+			case 1:
+				solicitudLiquidacionDeSueldo();
+				break;
+
+			case 2:
+				solicitudDeSueldos();
+				break;
+
+			case 3:
+				menuSolicitudSueldoNetoJugador();
+				break;
+
+			default:
+				break;
+		}
+
+		return menuPrincipal();
+	}
 	
-	
-	private void menuHacerPeticion() { //TODO
+	private void solicitudDeSueldos() { //TODO
 		
 	}
 
-	public boolean menuEditarSeleccion(){ //TODO
-		System.out.println();
-		return false;
+	private void menuSolicitudSueldoNetoJugador() { //TODO
+		borrarTerminal();
+		System.out.println("De que jugador quiere solicitar el sueldo");
+		//solicitudDeJugadores();
+	}
+	
+	public void menuEditarSeleccion(){ //TODO
+		borrarTerminal();
+		System.out.println("");
 	}
 
 	public void menuEditarIntegrantes() {
@@ -133,14 +173,14 @@ public class Cliente {
 							"1. Agregar integrante");
 		for (int i = 0; i < seleccionAFA.getSeleccionadoCount(); i++) {
 			IntegranteSeleccion_gRPC integrante= seleccionAFA.getSeleccionado(i);
-
+			
 			String nombre= integrante.getNombre();
 			String apellido= integrante.getApellido();
 			int hijos= integrante.getHijos();
 			double sueldoBasico= integrante.getSueldoBasico();
-
+			
 			System.out.println((i+2)+ ". " + 
-							nombre + " " + apellido +
+			nombre + " " + apellido +
 							", tiene " + hijos +
 							" con un sueldo basico de $" + sueldoBasico);
 
@@ -179,11 +219,11 @@ public class Cliente {
 	public boolean menuCrearSeleccion() {
 		borrarTerminal();
 		SeleccionAFA_gRPC.Builder nuevaSeleccion= SeleccionAFA_gRPC.newBuilder();
-		
+
 		System.out.println("Cual es el apellido de su presidente?");
 		String apellidoPresidente= System.console().readLine();
 		nuevaSeleccion.setPresidente(apellidoPresidente);
-		
+
 		boolean seguirAgregandoIntegrantes= true;
 		while (seguirAgregandoIntegrantes) {
 			System.out.println("quieres agregar un integrante? \r\n" + //
@@ -202,8 +242,8 @@ public class Cliente {
 		"1. Si\r\n" + //
 		"2. No");
 		int eleccionEnviarSeleccion= Integer.parseInt(System.console().readLine());
-		
-		
+
+
 		if (eleccionEnviarSeleccion == 1) {
 			seleccionAFA= nuevaSeleccion;
 			String respuestaServer= blockingStub.enviarSeleccion(nuevaSeleccion.build()).getMessage();
@@ -211,73 +251,73 @@ public class Cliente {
 		}else if (eleccionEnviarSeleccion == 2) {
 			System.out.println("los datos quedaran guardados, puede borrarlos si quiere");
 		}
-		
+
 		return menuPrincipal();
 	}
 
 	private IntegranteSeleccion_gRPC.Builder menuCrearEditarIntegrante() {
 		borrarTerminal();
 		IntegranteSeleccion_gRPC.Builder nuevoIntegrante= IntegranteSeleccion_gRPC.newBuilder();
-	
+
 		System.out.print("Que apellido tiene?: ");
 		nuevoIntegrante.setApellido(System.console().readLine());
 		System.out.println();
-	
+
 		System.out.print("Que nombre tiene?: ");
 		nuevoIntegrante.setNombre(System.console().readLine());
 		System.out.println();
-	
+
 		System.out.print("Cuantos hijos tiene?: ");
 		nuevoIntegrante.setHijos(Integer.parseInt(System.console().readLine()));
 		System.out.println();
-	
+
 		System.out.print("Que sueldo basico tiene?: ");
 		nuevoIntegrante.setSueldoBasico(Double.parseDouble(System.console().readLine()));
 		System.out.println();
-	
+
 		System.out.println("Que tipo de integrante sera?\r\n" + //
 				"1. Jugador\r\n" + //
 				"2. Entrenador\r\n" + //
 				"3. Masajista");
-	
-		int eleccionTipoDeIntegrante= Integer.parseInt(System.console().readLine());
-	
+
+				int eleccionTipoDeIntegrante= Integer.parseInt(System.console().readLine());
+
 		switch (eleccionTipoDeIntegrante) {
 			case 1:
 				Jugador_gRPC.Builder jugador= Jugador_gRPC.newBuilder();
-	
+
 				System.out.print("Que posicion tactica tiene?: ");
 				jugador.setPosicionTactica(System.console().readLine());
 				System.out.println();
-	
+				
 				System.out.print("Tiene premio?(1:si, otro:no): ");
 				jugador.setPremio((Integer.parseInt(System.console().readLine()) == 1?true:false));
 				System.out.println();
-	
+
 				nuevoIntegrante.setJugador(jugador);
 				break;
-			
+				
 			case 2:
 				Entrenador_gRPC.Builder entrenador= Entrenador_gRPC.newBuilder();
-	
+				
 				System.out.print("Que posicion tactica tiene?: ");
 				entrenador.setNacionalidad(System.console().readLine());
 				System.out.println();
-	
+				
 				nuevoIntegrante.setEntrenador(entrenador);
 				break;
-	
+
 			case 3:
 				Masajista_gRPC.Builder masajista= Masajista_gRPC.newBuilder();
-	
+
 				System.out.print("Que posicion tactica tiene?: ");
 				masajista.setTitulacion(System.console().readLine());
 				System.out.println();
-	
+
 				nuevoIntegrante.setMasajista(masajista);
 				break;
-		
-			default:
+
+				default:
 				break;
 		}
 	
@@ -288,11 +328,11 @@ public class Cliente {
 		seleccionAFA.addSeleccionado(menuCrearEditarIntegrante());
 		return menuPrincipal();
 	}
-	
-		public boolean menuEditarIntegrante(int index) {
+
+	public boolean menuEditarIntegrante(int index) {
 		seleccionAFA.setSeleccionado(index, menuCrearEditarIntegrante());
 		return menuPrincipal();
-		}
+	}
 	
 	/******************************Fin de menus******************************/
 	
@@ -304,7 +344,7 @@ public class Cliente {
 		eraser.addIgnoreClass(System.class);
 		eraser.start();
 	}
-	
+
 	private void ping() {
 		borrarTerminal();
 
@@ -312,7 +352,7 @@ public class Cliente {
 		RecibirMensaje respuestaPing= this.enviarMensaje("ping");
 		respuestaDelServidor= respuestaPing.getMessage();
 	}
-	
+
     private RecibirMensaje enviarMensaje(String message) {
 		Peticion peticion = Peticion.newBuilder()
 		.setTo(1)
@@ -321,7 +361,7 @@ public class Cliente {
 		
 		return blockingStub.ping(peticion);
     }
-	
+
 	private RecibirMensaje enviarSeleccion() {
 		return blockingStub.enviarSeleccion(seleccionAFA.build());
 	}
@@ -331,5 +371,9 @@ public class Cliente {
 				Thread.sleep(500);
 				new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 			} catch (Exception e) {}
+		}
+
+	private void solicitudLiquidacionDeSueldo() { //TODO
+
 	}
 }
