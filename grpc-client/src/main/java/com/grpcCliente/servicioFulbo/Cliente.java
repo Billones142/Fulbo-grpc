@@ -48,31 +48,31 @@ public class Cliente {
 		}
 
 		if (!mensajeAmostrar.isEmpty()) {
-			System.out.println(mensajeAmostrar);
+			println(mensajeAmostrar);
 		}
 
 		if (respuestaDelServidor != null) {
-			System.out.println( horaFormateada() + "  Respuesta del servidor: " );
-			System.out.println(respuestaDelServidor);
-			System.out.println();
+			println( horaFormateada() + "  Respuesta del servidor: " );
+			println(respuestaDelServidor);
+			println();
 			respuestaDelServidor= null;
 		}
 
-        System.out.println("Elija una opcion\r\n" + //
+        println("Elija una opcion\r\n" + //
 							"1. Enviar Ping\n\r" + //
                             "2. Crear nueva Seleccion FIFA\n\r" + 
 							"3. Hacer peticion al servidor");
 		if (seleccionAFA != null) {
-			System.out.println("3. Enviar seleccion guardada\r\n" + //
+			println("3. Enviar seleccion guardada\r\n" + //
 								"4. Editar seleccion FIFA\r\n"+
 								"5. Borrar datos de la seleccion\n\r" + //
 								"6. Terminar comunicacion con el servidor");
 		}
 		int eleccion= 0;
 		try {
-			eleccion= Integer.parseInt(System.console().readLine());
+			eleccion= consoleInInt();
 		} catch (NumberFormatException error) {
-			System.out.println("No se ingreso un numero valido. error:" + error.getMessage());
+			println("No se ingreso un numero valido. error:" + error.getMessage());
 		}
 
 		switch (eleccion) {
@@ -82,6 +82,10 @@ public class Cliente {
 
 			case 2: // Crear nueva Seleccion AFA
 				return menuCrearSeleccion();
+
+			case 3:
+				menuHacerPeticion();
+				break;
 
 			case 4:
 				menuHacerPeticion();
@@ -121,14 +125,14 @@ public class Cliente {
 
 	private boolean menuHacerPeticion() { //TODO: ver peticiones
 		borrarTerminal();
-		System.out.println("Que peticion quiere hacer al servidor?\r\n" + //
+		println("Que peticion quiere hacer al servidor?\r\n" + //
 							"1. liquidar sueldos\r\n" + //
 							"2. solicitar nomina\r\n" + //
 							"3. sueldo neto de jugador");
 
 		int eleccionPeticion;
 		try {
-			eleccionPeticion= Integer.parseInt(System.console().readLine());
+			eleccionPeticion= consoleInInt();
 		} catch (Exception e) {
 			eleccionPeticion= 0;
 		}
@@ -159,18 +163,18 @@ public class Cliente {
 
 	private void menuSolicitudSueldoNetoJugador() { //TODO
 		borrarTerminal();
-		System.out.println("De que jugador quiere solicitar el sueldo");
+		println("De que jugador quiere solicitar el sueldo");
 		//solicitudDeJugadores();
 	}
 	
 	public void menuEditarSeleccion(){ //TODO
 		borrarTerminal();
-		System.out.println("");
+		println("");
 	}
 
 	public void menuEditarIntegrantes() {
 		borrarTerminal();
-		System.out.println("Elija una opcion:\r\n" + //
+		println("Elija una opcion:\r\n" + //
 							"1. Volver" +
 							"1. Agregar integrante");
 		for (int i = 0; i < seleccionAFA.getSeleccionadoCount(); i++) {
@@ -181,30 +185,30 @@ public class Cliente {
 			int hijos= integrante.getHijos();
 			double sueldoBasico= integrante.getSueldoBasico();
 			
-			System.out.println((i+2)+ ". " + 
+			println((i+2)+ ". " + 
 			nombre + " " + apellido +
 							", tiene " + hijos +
 							" con un sueldo basico de $" + sueldoBasico);
 
-			System.out.print("Es ");
+			print("Es ");
 
 			if (integrante.hasJugador()) {
-				System.out.println("Jugador" + 
+				println("Jugador" + 
 				", juega como " + integrante.getJugador().getPosicionTactica() + 
 				(integrante.getJugador().getPremio()?" y tiene un premio":""));
 
 			}else if (integrante.hasEntrenador()) {
-				System.out.println("Entrenador, y es de " + integrante.getEntrenador().getNacionalidad());
+				println("Entrenador, y es de " + integrante.getEntrenador().getNacionalidad());
 
 			}else if (integrante.hasMasajista()) {
-				System.out.println("Masajista, con un titulo como " + integrante.getMasajista());
+				println("Masajista, con un titulo como " + integrante.getMasajista());
 			}
 
 			int eleccionEdicionIntegrante= 1;
 			try {
-				eleccionEdicionIntegrante= Integer.parseInt(System.console().readLine());
+				eleccionEdicionIntegrante= consoleInInt();
 			} catch (Exception e) {
-				System.out.println("numero no valido");
+				println("numero no valido");
 			}
 
 			if (eleccionEdicionIntegrante == 2) {
@@ -212,7 +216,7 @@ public class Cliente {
 			}else if (eleccionEdicionIntegrante > 2) {
 				menuEditarIntegrante(eleccionEdicionIntegrante-2);
 			}else{
-				System.out.println("eleccion no valida");
+				println("eleccion no valida");
 				menuEditarIntegrantes();
 			}
 		}
@@ -222,16 +226,16 @@ public class Cliente {
 		borrarTerminal();
 		SeleccionAFA_gRPC.Builder nuevaSeleccion= SeleccionAFA_gRPC.newBuilder();
 
-		System.out.println("Cual es el apellido de su presidente?");
-		String apellidoPresidente= System.console().readLine();
-		nuevaSeleccion.setPresidente(apellidoPresidente);
+		println("Cual es el apellido de su presidente?");
+
+		nuevaSeleccion.setPresidente(consoleIn());
 
 		boolean seguirAgregandoIntegrantes= true;
 		while (seguirAgregandoIntegrantes) {
-			System.out.println("quieres agregar un integrante? \r\n" + //
+			println("quieres agregar un integrante? \r\n" + //
 			"1. Si\r\n" + //
 			"2. No");
-			int eleccionAgregrarIntegrante= Integer.parseInt(System.console().readLine());
+			int eleccionAgregrarIntegrante= consoleInInt();
 			if (eleccionAgregrarIntegrante == 1) {
 				menuAgregarIntegrante();
 			}else{
@@ -240,18 +244,18 @@ public class Cliente {
 		}
 
 		
-		System.out.println("termino de ingresar los datos para su nueva seleccion, quiere enviarla al servidor?\r\n" + //
+		println("termino de ingresar los datos para su nueva seleccion, quiere enviarla al servidor?\r\n" + //
 		"1. Si\r\n" + //
 		"2. No");
-		int eleccionEnviarSeleccion= Integer.parseInt(System.console().readLine());
+		int eleccionEnviarSeleccion= consoleInInt();
 
 
 		if (eleccionEnviarSeleccion == 1) {
 			seleccionAFA= nuevaSeleccion;
 			String respuestaServer= blockingStub.enviarSeleccion(nuevaSeleccion.build()).getMessage();
-			System.out.println("respuesta del servidor" + respuestaServer);
+			println("respuesta del servidor" + respuestaServer);
 		}else if (eleccionEnviarSeleccion == 2) {
-			System.out.println("los datos quedaran guardados, puede borrarlos si quiere");
+			println("los datos quedaran guardados, puede borrarlos si quiere");
 		}
 
 		return menuPrincipal();
@@ -261,40 +265,40 @@ public class Cliente {
 		borrarTerminal();
 		IntegranteSeleccion_gRPC.Builder nuevoIntegrante= IntegranteSeleccion_gRPC.newBuilder();
 
-		System.out.print("Que apellido tiene?: ");
-		nuevoIntegrante.setApellido(System.console().readLine());
-		System.out.println();
+		print("Que apellido tiene?: ");
+		nuevoIntegrante.setApellido(consoleIn());
+		println();
 
-		System.out.print("Que nombre tiene?: ");
-		nuevoIntegrante.setNombre(System.console().readLine());
-		System.out.println();
+		print("Que nombre tiene?: ");
+		nuevoIntegrante.setNombre(consoleIn());
+		println();
 
-		System.out.print("Cuantos hijos tiene?: ");
-		nuevoIntegrante.setHijos(Integer.parseInt(System.console().readLine()));
-		System.out.println();
+		print("Cuantos hijos tiene?: ");
+		nuevoIntegrante.setHijos(Integer.parseInt(consoleIn()));
+		println();
 
-		System.out.print("Que sueldo basico tiene?: ");
-		nuevoIntegrante.setSueldoBasico(Double.parseDouble(System.console().readLine()));
-		System.out.println();
+		print("Que sueldo basico tiene?: ");
+		nuevoIntegrante.setSueldoBasico(consoleInDouble());
+		println();
 
-		System.out.println("Que tipo de integrante sera?\r\n" + //
+		println("Que tipo de integrante sera?\r\n" + //
 				"1. Jugador\r\n" + //
 				"2. Entrenador\r\n" + //
 				"3. Masajista");
 
-				int eleccionTipoDeIntegrante= Integer.parseInt(System.console().readLine());
+				int eleccionTipoDeIntegrante= consoleInInt();
 
 		switch (eleccionTipoDeIntegrante) {
 			case 1:
 				Jugador_gRPC.Builder jugador= Jugador_gRPC.newBuilder();
 
-				System.out.print("Que posicion tactica tiene?: ");
-				jugador.setPosicionTactica(System.console().readLine());
-				System.out.println();
+				print("Que posicion tactica tiene?: ");
+				jugador.setPosicionTactica(consoleIn());
+				println();
 				
-				System.out.print("Tiene premio?(1:si, otro:no): ");
-				jugador.setPremio((Integer.parseInt(System.console().readLine()) == 1?true:false));
-				System.out.println();
+				print("Tiene premio?(1:si, otro:no): ");
+				jugador.setPremio((Integer.parseInt(consoleIn()) == 1?true:false));
+				println();
 
 				nuevoIntegrante.setJugador(jugador);
 				break;
@@ -302,9 +306,9 @@ public class Cliente {
 			case 2:
 				Entrenador_gRPC.Builder entrenador= Entrenador_gRPC.newBuilder();
 				
-				System.out.print("Que posicion tactica tiene?: ");
-				entrenador.setNacionalidad(System.console().readLine());
-				System.out.println();
+				print("Que posicion tactica tiene?: ");
+				entrenador.setNacionalidad(consoleIn());
+				println();
 				
 				nuevoIntegrante.setEntrenador(entrenador);
 				break;
@@ -312,9 +316,9 @@ public class Cliente {
 			case 3:
 				Masajista_gRPC.Builder masajista= Masajista_gRPC.newBuilder();
 
-				System.out.print("Que titulacion tiene?: ");
-				masajista.setTitulacion(System.console().readLine());
-				System.out.println();
+				print("Que titulacion tiene?: ");
+				masajista.setTitulacion(consoleIn());
+				println();
 
 				nuevoIntegrante.setMasajista(masajista);
 				break;
@@ -351,7 +355,7 @@ public class Cliente {
 	private void ping() {
 		borrarTerminal();
 
-		System.out.println("enviando Ping...");
+		println("enviando Ping...");
 
 		Peticion peticion = Peticion.newBuilder()
 		.setTo(1)
@@ -383,7 +387,35 @@ public class Cliente {
 		Instant instant = Instant.now();
         ZoneId zoneId = ZoneId.systemDefault();
 		LocalDateTime localDateTime = instant.atZone(zoneId).toLocalDateTime();
+
+		int hora= localDateTime.getHour();
+		int minuto= localDateTime.getMinute();
+		int segundo= localDateTime.getSecond();
 		
-		return localDateTime.getHour()+":" + localDateTime.getMinute() + ":" + localDateTime.getSecond();
+		return (hora > 10?hora:"0"+hora)+":" + (minuto > 10?minuto:"0"+minuto) + ":" + (segundo > 10?segundo:"0"+segundo);
+	}
+
+	private void println() { //TODO
+		System.out.println();
+	}
+
+	private void println(String mensaje) { //TODO
+		System.out.println(mensaje);
+	}
+
+	private void print(String mensaje) { //TODO
+		System.out.print(mensaje);
+	}
+
+	private String consoleIn(){
+		return System.console().readLine();
+	}
+
+	private int consoleInInt(){
+		return Integer.parseInt(consoleIn());
+	}
+
+	private double consoleInDouble(){
+		return Double.parseDouble(consoleIn());
 	}
 }
