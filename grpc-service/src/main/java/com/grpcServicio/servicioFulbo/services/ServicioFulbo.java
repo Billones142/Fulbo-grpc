@@ -12,14 +12,18 @@ import io.grpc.stub.StreamObserver;
 //import com.grpcServicio.servicioFulbo.MultiplesRespuestasStream;
 
 // interfaces gRCP
-import com.grpcInterfaces.fulbo.RecibirMensaje;
-import com.grpcInterfaces.fulbo.SeleccionAFA_gRPC;
-import com.grpcInterfaces.fulbo.Peticion;
 import com.grpcInterfaces.fulbo.ServicioFulboGrpc.ServicioFulboImplBase;
+
+//mensajes para comunicacion
+import com.grpcInterfaces.fulbo.Peticion;
+import com.grpcInterfaces.fulbo.RecibirMensaje;
 import com.grpcInterfaces.fulbo.DatosDePeticion;
-import com.grpcInterfaces.fulbo.Entrenador_gRPC;
+
+//mensajes para objetos
+import com.grpcInterfaces.fulbo.SeleccionAFA_gRPC;
 import com.grpcInterfaces.fulbo.IntegranteSeleccion_gRPC;
 import com.grpcInterfaces.fulbo.Jugador_gRPC;
+import com.grpcInterfaces.fulbo.Entrenador_gRPC;
 import com.grpcInterfaces.fulbo.Masajista_gRPC;
 
 // clases de Fulbo
@@ -119,7 +123,7 @@ public class ServicioFulbo extends ServicioFulboImplBase {
         responseObserver.onCompleted();
     }
     
-    private SeleccionAFA_gRPC seleccionAProtocolo(SeleccionAFA seleccionAFA){
+    /*private SeleccionAFA_gRPC seleccionAProtocolo(SeleccionAFA seleccionAFA){
         SeleccionAFA_gRPC.Builder seleccionAenviar= SeleccionAFA_gRPC.newBuilder();
 
         seleccionAenviar.setPresidente(seleccionAFA.getPresidente());
@@ -129,7 +133,7 @@ public class ServicioFulbo extends ServicioFulboImplBase {
         }
 
         return seleccionAenviar.build();
-    }
+    }*/
 
     private IntegranteSeleccion_gRPC jugadorAprotocolo(IintegranteSeleccion integranteSeleccion) {
         IntegranteSeleccion_gRPC.Builder integranteAenviar= IntegranteSeleccion_gRPC.newBuilder();

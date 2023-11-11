@@ -16,7 +16,7 @@ service ServicioFulbo {
     rpc peticionDeIntegrantes (Peticion) returns (stream IntegranteSeleccion_gRPC) {}
     rpc peticionDeDatos (Peticion) returns  (DatosDePeticion) {}
 
-    // envio de objetos
+    // envio de seleccion
     rpc enviarSeleccion (SeleccionAFA_gRPC) returns (RecibirMensaje) {}
 }
 

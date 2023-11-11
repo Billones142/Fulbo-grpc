@@ -1,5 +1,9 @@
 package com.grpcCliente.servicioFulbo;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 //import org.springframework.boot.SpringApplication;
 //import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.lognet.springboot.grpc.GRpcService;
@@ -38,8 +42,6 @@ public class Cliente {
 	}
 
 	public boolean menuPrincipal(boolean limpiarTerminal, String mensajeAmostrar) { // TODO: ejecutar en un while en vez de ser recursivo
-		enviarMensaje("ping"); // ping para verificar la coneccion con el servidor
-
 
 		if (limpiarTerminal) {
 			borrarTerminal();
@@ -50,7 +52,7 @@ public class Cliente {
 		}
 
 		if (respuestaDelServidor != null) {
-			System.out.println("Respuesta del servidor: ");
+			System.out.println( horaFormateada() + "  Respuesta del servidor: " );
 			System.out.println(respuestaDelServidor);
 			System.out.println();
 			respuestaDelServidor= null;
@@ -310,7 +312,7 @@ public class Cliente {
 			case 3:
 				Masajista_gRPC.Builder masajista= Masajista_gRPC.newBuilder();
 
-				System.out.print("Que posicion tactica tiene?: ");
+				System.out.print("Que titulacion tiene?: ");
 				masajista.setTitulacion(System.console().readLine());
 				System.out.println();
 
@@ -339,6 +341,7 @@ public class Cliente {
     public Cliente(String host, int port) {
 		this.channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
         this.blockingStub = ServicioFulboGrpc.newBlockingStub(channel);
+		ping(); // ping para verificar la coneccion con el servidor
 
 		eraser = new ConsoleEraser();
 		eraser.addIgnoreClass(System.class);
@@ -349,18 +352,21 @@ public class Cliente {
 		borrarTerminal();
 
 		System.out.println("enviando Ping...");
-		RecibirMensaje respuestaPing= this.enviarMensaje("ping");
+
+		Peticion peticion = Peticion.newBuilder()
+		.setTo(1)
+		.setMessage("ping")
+		.build();
+
+		RecibirMensaje respuestaPing= blockingStub.ping(peticion);
+
+
 		respuestaDelServidor= respuestaPing.getMessage();
 	}
 
-    private RecibirMensaje enviarMensaje(String message) {
-		Peticion peticion = Peticion.newBuilder()
-		.setTo(1)
-		.setMessage(message)
-		.build();
+	private void solicitudLiquidacionDeSueldo() { //TODO
 		
-		return blockingStub.ping(peticion);
-    }
+	}
 
 	private RecibirMensaje enviarSeleccion() {
 		return blockingStub.enviarSeleccion(seleccionAFA.build());
@@ -371,9 +377,13 @@ public class Cliente {
 				Thread.sleep(500);
 				new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 			} catch (Exception e) {}
-		}
+	}
 
-	private void solicitudLiquidacionDeSueldo() { //TODO
-
+	private String horaFormateada(){
+		Instant instant = Instant.now();
+        ZoneId zoneId = ZoneId.systemDefault();
+		LocalDateTime localDateTime = instant.atZone(zoneId).toLocalDateTime();
+		
+		return localDateTime.getHour()+":" + localDateTime.getMinute() + ":" + localDateTime.getSecond();
 	}
 }
