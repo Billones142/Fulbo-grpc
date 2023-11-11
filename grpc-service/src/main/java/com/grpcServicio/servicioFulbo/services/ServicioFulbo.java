@@ -56,7 +56,7 @@ public class ServicioFulbo extends ServicioFulboImplBase {
 
     
     @Override
-    public void peticionDeIntegrantes(Peticion peticion, StreamObserver<IntegranteSeleccion_gRPC> responseObserver) { //TODO
+    public void peticionDeIntegrantes(Peticion peticion, StreamObserver<IntegranteSeleccion_gRPC> responseObserver) {
         if (peticion.getTo() != 1) {
             return;
         }
@@ -93,16 +93,33 @@ public class ServicioFulbo extends ServicioFulboImplBase {
                 datosAenviar.addMessage(linea);                
             }
 
-        }/*else if (request.startsWith("sueldo neto de jugador: ")) {
+        }else if (request.startsWith("sueldo neto de jugador: ")) {
             int index= Integer.parseInt(request.split("jugador: ")[2]);
-        }*/
+            IintegranteSeleccion integrante= seleccion.getSeleccionado().get(index);
+            double sueldoNetoJugador= integrante.sueldoNeto();
+            String nombreYapellido= integrante.getNombre() + " " + integrante.getApellido();
+            datosAenviar.addMessage(nombreYapellido + " tiene un sueldo neto de $" + sueldoNetoJugador);
+        }
 
         responseObserver.onNext(datosAenviar.build());
 
         responseObserver.onCompleted();
     }
+
+    @Override
+    public void enviarSeleccion(SeleccionAFA_gRPC seleccionRecibida, StreamObserver<RecibirMensaje> responseObserver){
+        seleccion= protocoloAseleccion(seleccionRecibida);
+
+        RecibirMensaje mensaje= RecibirMensaje.newBuilder()
+                            .setMessage("Seleccion con el presidente " + seleccionRecibida.getPresidente() + " recibida")
+                            .build();
+
+        responseObserver.onNext(mensaje);
+
+        responseObserver.onCompleted();
+    }
     
-    private SeleccionAFA_gRPC seleccionAFAProtocolo(SeleccionAFA seleccionAFA){
+    private SeleccionAFA_gRPC seleccionAProtocolo(SeleccionAFA seleccionAFA){
         SeleccionAFA_gRPC.Builder seleccionAenviar= SeleccionAFA_gRPC.newBuilder();
 
         seleccionAenviar.setPresidente(seleccionAFA.getPresidente());
@@ -150,7 +167,7 @@ public class ServicioFulbo extends ServicioFulboImplBase {
         return integranteAenviar.build();
     }
     
-    public IintegranteSeleccion crearIntegrante(IntegranteSeleccion_gRPC nuevoIntegrante) {
+    public IintegranteSeleccion protocoloAintegrante(IntegranteSeleccion_gRPC nuevoIntegrante) {
     IintegranteSeleccion integrante= null;
 
         String nombre= nuevoIntegrante.getNombre();
@@ -181,17 +198,17 @@ public class ServicioFulbo extends ServicioFulboImplBase {
         return integrante;
     }
 
-    private SeleccionAFA crearSeleccion(SeleccionAFA_gRPC seleccionProtocolo) { //TODO
+    private SeleccionAFA protocoloAseleccion(SeleccionAFA_gRPC seleccionProtocolo) { //TODO
         SeleccionAFA nuevaSeleccion= new SeleccionAFA(seleccionProtocolo.getPresidente());
         for (int i = 0; i < seleccionProtocolo.getSeleccionadoCount(); i++) {
             nuevaSeleccion.agregarIntegrante(
-                                crearIntegrante(
+                                protocoloAintegrante(
                                     seleccionProtocolo.getSeleccionado(i))
             );
         }
 
         for (int i = 0; i < seleccionProtocolo.getSeleccionadoCount(); i++) {
-            nuevaSeleccion.agregarIntegrante(crearIntegrante(seleccionProtocolo.getSeleccionado(i)));
+            nuevaSeleccion.agregarIntegrante(protocoloAintegrante(seleccionProtocolo.getSeleccionado(i)));
         }
 
         return nuevaSeleccion;

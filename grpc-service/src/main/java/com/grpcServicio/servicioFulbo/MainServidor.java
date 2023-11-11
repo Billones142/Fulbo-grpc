@@ -12,6 +12,5 @@ public class MainServidor {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MainServidor.class, args);
-		System.console().readLine();
 	}
 }
