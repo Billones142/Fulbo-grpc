@@ -28,23 +28,15 @@ public class MenuCliente extends ClienteFunciones{
 	/******************************Inicio de menus******************************/
 
 	public boolean menuPrincipal() {
-		return menuPrincipal(true, "");
-	}
 
-	public boolean menuPrincipal(String mensaje) {
-		return menuPrincipal(true, mensaje);
-	}
-
-	public boolean menuPrincipal(boolean limpiarTerminal, String mensajeAmostrar) {
+		String mensajeError= "";
 
 		boolean seguirEjecutando= true;
 		while (seguirEjecutando) {
-			if (limpiarTerminal) {
-				borrarTerminal();
-			}
+			borrarTerminal();
 
-			if (!mensajeAmostrar.isEmpty()) {
-				println(mensajeAmostrar);
+			if (!mensajeError.isEmpty()) {
+				println("Error: " + mensajeError);
 			}
 
 			if (respuestaDelServidor != null) {
@@ -76,7 +68,7 @@ public class MenuCliente extends ClienteFunciones{
 					borrarTerminal();
 
 					println("enviando Ping...");
-					ping();
+					respuestaDelServidor= ping();
 					menuPrincipal();
 					break;
 
@@ -109,7 +101,7 @@ public class MenuCliente extends ClienteFunciones{
 					break;
 
 				default:
-					mensajeAmostrar= "No se elijio una opcion valida";
+					mensajeError= "No se elijio una opcion valida";
 			}
 		}
 
@@ -392,8 +384,12 @@ public class MenuCliente extends ClienteFunciones{
 		int hora= localDateTime.getHour();
 		int minuto= localDateTime.getMinute();
 		int segundo= localDateTime.getSecond();
-		
-		return (hora > 10?hora:"0"+hora)+":" + (minuto > 10?minuto:"0"+minuto) + ":" + (segundo > 10?segundo:"0"+segundo);
+
+		String horaConFormato= (hora >= 10? ""+hora : "0"+hora);
+		String minutoConFormato= (minuto >= 10? ""+minuto:"0"+minuto);
+		String segundoConFormato= (segundo >= 10 ? ""+segundo:"0"+segundo);
+
+		return horaConFormato+":" + minutoConFormato + ":" + segundoConFormato;
 	}
 
 	//**************************Consola**************************//
