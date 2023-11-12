@@ -35,7 +35,7 @@ public class MenuCliente extends ClienteFunciones{
 		return menuPrincipal(true, mensaje);
 	}
 
-	public boolean menuPrincipal(boolean limpiarTerminal, String mensajeAmostrar) { // TODO: ejecutar en un while en vez de ser recursivo
+	public boolean menuPrincipal(boolean limpiarTerminal, String mensajeAmostrar) {
 
 		boolean seguirEjecutando= true;
 		while (seguirEjecutando) {
@@ -118,7 +118,7 @@ public class MenuCliente extends ClienteFunciones{
     }
 
 
-	private void menuHacerPeticion() { //TODO: ver peticiones
+	private void menuHacerPeticion() {
 		borrarTerminal();
 		println("Que solicitud quiere hacer al servidor?\r\n" + //
 							"1. liquidar sueldos\r\n" + //
@@ -134,11 +134,11 @@ public class MenuCliente extends ClienteFunciones{
 
 		switch (eleccionPeticion) {
 			case 1:
-				solicitudLiquidacionDeSueldo();
+				respuestaDelServidor= solicitudLiquidacionDeSueldo();
 				break;
 
 			case 2:
-				solicitudDeNomina();
+				respuestaDelServidor= solicitudDeNomina();
 				break;
 
 			case 3:
@@ -150,7 +150,7 @@ public class MenuCliente extends ClienteFunciones{
 		}
 	}
 
-	private void menuSolicitudSueldoNetoJugador() { //TODO
+	private void menuSolicitudSueldoNetoJugador() {
 		borrarTerminal();
 		Iterator<IntegranteSeleccion_gRPC> jugadores= peticionIntegrantes();
 		println("De que jugador quiere solicitar el sueldo?: " + 
@@ -180,7 +180,7 @@ public class MenuCliente extends ClienteFunciones{
 		}
 	}
 
-	private void menuEditarSeleccion(){ //TODO
+	private void menuEditarSeleccion(){
 		borrarTerminal();
 		println("El presidente actual de la seleccion es " + seleccionAFA.getPresidente() + "\n\r" +
 		"quiere modificarlo?(1:si, otro:no): ");
