@@ -34,10 +34,10 @@ public class MainCliente {
         boolean seguirEjecutando= true;
         while (seguirEjecutando) {
             try {
-                Cliente client = new Cliente(host, port);
+                MenuCliente client = new MenuCliente(host, port);
                 seguirEjecutando= client.menuPrincipal();
             } catch (Exception error) {
-                Cliente.borrarTerminal();
+                MenuCliente.borrarTerminal();
                 System.out.print("Error: " + error.getMessage() + "\r\n" + // 
                 "no se pudo establecer la conexion con el servidor\r\n" + //
                 "reintentado en 3 segundos.");

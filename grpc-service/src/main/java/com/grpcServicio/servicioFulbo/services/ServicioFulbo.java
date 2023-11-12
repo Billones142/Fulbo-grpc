@@ -103,6 +103,9 @@ public class ServicioFulbo extends ServicioFulboImplBase {
             double sueldoNetoJugador= integrante.sueldoNeto();
             String nombreYapellido= integrante.getNombre() + " " + integrante.getApellido();
             datosAenviar.addMessage(nombreYapellido + " tiene un sueldo neto de $" + sueldoNetoJugador);
+
+        }else{
+            datosAenviar.addMessage("Peticion no valida");
         }
 
         responseObserver.onNext(datosAenviar.build());
