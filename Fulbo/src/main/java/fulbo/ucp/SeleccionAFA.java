@@ -10,7 +10,7 @@ public class SeleccionAFA {
         setPresidente(pPresidente);
     }
 
-    private ArrayList<IintegranteSeleccion> seleccionado= new ArrayList<>();
+    private ArrayList<IintegranteSeleccion> seleccionado= new ArrayList<IintegranteSeleccion>();
     private String presidente;
     private String pais;
 
@@ -41,10 +41,6 @@ public class SeleccionAFA {
     /**********************Fin encapsulacion**********************/
 
     public void agregarIntegrante(IintegranteSeleccion pIntegrante) {
-        getSeleccionado().add(pIntegrante);
-    }
-
-    public void agregarIntegrante(IntegranteSeleccion pIntegrante) {
         getSeleccionado().add(pIntegrante);
     }
     

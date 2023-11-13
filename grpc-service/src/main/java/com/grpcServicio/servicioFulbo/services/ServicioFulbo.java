@@ -1,6 +1,7 @@
 package com.grpcServicio.servicioFulbo.services;
 
 import org.lognet.springboot.grpc.GRpcService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 //import com.google.protobuf.Field;
 //import com.google.protobuf.Descriptors.FieldDescriptor;
@@ -27,15 +28,19 @@ import com.grpcInterfaces.fulbo.Entrenador_gRPC;
 import com.grpcInterfaces.fulbo.Masajista_gRPC;
 
 // clases de Fulbo
-import fulbo.ucp.*;
-import fulbo.ucp.interfaces.*;
+import fulbo.ucp.SeleccionAFA;
+import fulbo.ucp.Jugador;
+import fulbo.ucp.Entrenador;
+import fulbo.ucp.Masajista;
+
+import fulbo.ucp.interfaces.IintegranteSeleccion;
 
 
 
 @GRpcService
 public class ServicioFulbo extends ServicioFulboImplBase {
-
-    SeleccionAFA seleccion;
+    
+    private SeleccionAFA seleccion;
 
     @Override
     public void ping(Peticion request, StreamObserver<RecibirMensaje> responseObserver) {
@@ -98,9 +103,16 @@ public class ServicioFulbo extends ServicioFulboImplBase {
             }
 
         }else if (request.startsWith("sueldo neto de jugador: ")) {
-            int index= Integer.parseInt(request.split("jugador: ")[2]);
+            int index= Integer.parseInt(request.split("jugador: ")[1]);
             IintegranteSeleccion integrante= seleccion.getSeleccionado().get(index);
-            double sueldoNetoJugador= integrante.sueldoNeto();
+            double sueldoNetoJugador= -1;
+            if (integrante instanceof Jugador) {
+                sueldoNetoJugador= ((Jugador)integrante).sueldoNeto();
+            }else if (integrante instanceof Entrenador) {
+                sueldoNetoJugador= ((Entrenador)integrante).sueldoNeto();
+            }else if (integrante instanceof Masajista) {
+                sueldoNetoJugador= ((Masajista)integrante).sueldoNeto();
+            }
             String nombreYapellido= integrante.getNombre() + " " + integrante.getApellido();
             datosAenviar.addMessage(nombreYapellido + " tiene un sueldo neto de $" + sueldoNetoJugador);
 
@@ -126,7 +138,7 @@ public class ServicioFulbo extends ServicioFulboImplBase {
         responseObserver.onCompleted();
     }
     
-    /*private SeleccionAFA_gRPC seleccionAProtocolo(SeleccionAFA seleccionAFA){
+    private SeleccionAFA_gRPC seleccionAProtocolo(SeleccionAFA seleccionAFA){
         SeleccionAFA_gRPC.Builder seleccionAenviar= SeleccionAFA_gRPC.newBuilder();
 
         seleccionAenviar.setPresidente(seleccionAFA.getPresidente());
@@ -136,7 +148,7 @@ public class ServicioFulbo extends ServicioFulboImplBase {
         }
 
         return seleccionAenviar.build();
-    }*/
+    }
 
     private IntegranteSeleccion_gRPC jugadorAprotocolo(IintegranteSeleccion integranteSeleccion) {
         IntegranteSeleccion_gRPC.Builder integranteAenviar= IntegranteSeleccion_gRPC.newBuilder();
@@ -173,51 +185,72 @@ public class ServicioFulbo extends ServicioFulboImplBase {
 
         return integranteAenviar.build();
     }
-    
+
+    private SeleccionAFA protocoloAseleccion(SeleccionAFA_gRPC seleccionProtocolo) {
+        SeleccionAFA nuevaSeleccion= new SeleccionAFA(seleccionProtocolo.getPresidente());
+
+        for (int i = 0; i < seleccionProtocolo.getSeleccionadoCount(); i++) {
+            IintegranteSeleccion integranteAagregar= protocoloAintegrante(
+                                    seleccionProtocolo.getSeleccionado(i));
+
+            // no preguntar... cosas de java, o maven, no se, estoy confundido, pero funciona
+            if (integranteAagregar instanceof Jugador) {
+                nuevaSeleccion.agregarIntegrante((Jugador)integranteAagregar);
+            }else if (integranteAagregar instanceof Entrenador) {
+                nuevaSeleccion.agregarIntegrante((Entrenador)integranteAagregar);
+            }else if (integranteAagregar instanceof Masajista) {
+                nuevaSeleccion.agregarIntegrante((Masajista)integranteAagregar);
+            }
+            
+        }
+
+        return nuevaSeleccion;
+    }
+
+    /**
+     * @param nuevoIntegrante
+     * @return null si no es un integrante valido
+     */
     public IintegranteSeleccion protocoloAintegrante(IntegranteSeleccion_gRPC nuevoIntegrante) {
-    IintegranteSeleccion integrante= null;
 
         String nombre= nuevoIntegrante.getNombre();
         String apellido= nuevoIntegrante.getApellido();
         int hijos= nuevoIntegrante.getHijos();
         double sueldoBasico= nuevoIntegrante.getSueldoBasico();
         if(nuevoIntegrante.hasJugador()){
-            integrante= new Jugador(nombre,
+            return new Jugador(nombre,
                                     apellido,
                                     hijos,
                                     sueldoBasico,
                                     nuevoIntegrante.getJugador().getPosicionTactica(),
                                     nuevoIntegrante.getJugador().getPremio());
         }else if(nuevoIntegrante.hasEntrenador()){
-            integrante=  new Entrenador(nombre,
+            return new Entrenador(nombre,
                                         apellido,
                                         hijos,
                                         sueldoBasico,
                                         nuevoIntegrante.getEntrenador().getNacionalidad());
         }else if(nuevoIntegrante.hasMasajista()){
-            integrante=  new Entrenador(nombre,
+            return new Entrenador(nombre,
                                         apellido,
                                         hijos,
                                         sueldoBasico,
                                         nuevoIntegrante.getMasajista().getTitulacion());
         }
 
-        return integrante;
+        return null;
     }
 
-    private SeleccionAFA protocoloAseleccion(SeleccionAFA_gRPC seleccionProtocolo) { //TODO
-        SeleccionAFA nuevaSeleccion= new SeleccionAFA(seleccionProtocolo.getPresidente());
-        for (int i = 0; i < seleccionProtocolo.getSeleccionadoCount(); i++) {
-            nuevaSeleccion.agregarIntegrante(
-                                protocoloAintegrante(
-                                    seleccionProtocolo.getSeleccionado(i))
-            );
-        }
-
-        for (int i = 0; i < seleccionProtocolo.getSeleccionadoCount(); i++) {
-            nuevaSeleccion.agregarIntegrante(protocoloAintegrante(seleccionProtocolo.getSeleccionado(i)));
-        }
-
-        return nuevaSeleccion;
-    }
+    /*private Class tipoDeIntegrante(IintegranteSeleccion integrante) { // funcion experimental para solucionar error
+        
+        if (integrante instanceof Jugador) { 
+                return Jugador.class;
+            }else if (integrante instanceof Entrenador) {
+                return Entrenador.class;
+            }else if (integrante instanceof Masajista) {
+                return Masajista.class;
+            }else{
+                return IintegranteSeleccion.class;
+            }
+    }*/
 }
