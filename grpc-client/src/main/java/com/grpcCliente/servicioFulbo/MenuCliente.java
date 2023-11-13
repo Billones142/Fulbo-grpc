@@ -23,7 +23,7 @@ public class MenuCliente extends ClienteFunciones{
 
 	SeleccionAFA_gRPC.Builder seleccionAFA= null;
 	ConsoleEraser eraser;
-	protected String respuestaDelServidor= null;
+	private String respuestaDelServidor= null;
 
 	/******************************Inicio de menus******************************/
 
@@ -57,11 +57,20 @@ public class MenuCliente extends ClienteFunciones{
 								}
 			println("7. Terminar comunicacion con el servidor");
 			int eleccion= 0;
-			try {
-				eleccion= consoleInInt();
-			} catch (NumberFormatException error) {
-				println("No se ingreso un numero valido. error:" + error.getMessage());
-			}
+
+			boolean numeroNoValido= true;
+
+			do {
+				try {
+					eleccion= consoleInInt();
+					boolean estaEntre3y7= (eleccion > 3) && (eleccion < 7);
+					if ((seleccionAFA == null) && !estaEntre3y7) {
+						numeroNoValido= false;
+					}
+				} catch (NumberFormatException error) {
+					println("No se ingreso un numero valido. error:" + error.getMessage());
+				}
+			} while (numeroNoValido);
 
 			switch (eleccion) {
 				case 1: // Enviar Ping
@@ -256,6 +265,7 @@ public class MenuCliente extends ClienteFunciones{
 
 		boolean seguirAgregandoIntegrantes= true;
 		while (seguirAgregandoIntegrantes) {
+			borrarTerminal();
 			println("Quiere agregar"+ (nuevaSeleccion.getSeleccionadoCount() == 0?" un":" otro") + " integrante? \r\n" + //
 			"1. Si\r\n" + //
 			"2. No");
@@ -320,7 +330,12 @@ public class MenuCliente extends ClienteFunciones{
 				println();
 				
 				print("Tiene premio?(1:si, otro:no): ");
-				jugador.setPremio((Integer.parseInt(consoleIn()) == 1?true:false));
+				try {
+					jugador.setPremio((Integer.parseInt(consoleIn()) == 1?true:false));
+				} catch (Exception e) {
+					jugador.setPremio(false);
+				}
+
 				println();
 
 				nuevoIntegrante.setJugador(jugador);
@@ -355,7 +370,6 @@ public class MenuCliente extends ClienteFunciones{
 
 	private void menuAgregarIntegrante(){
 		seleccionAFA.addSeleccionado(menuCrearEditarIntegrante());
-		
 	}
 
 	public void menuEditarIntegrante(int index) {
@@ -432,5 +446,4 @@ public class MenuCliente extends ClienteFunciones{
 				new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 			} catch (Exception e) {}
 	}
-
 }

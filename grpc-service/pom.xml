@@ -84,6 +84,39 @@
 						<groupId>org.springframework.boot</groupId>
 						<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>single</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>com.grpcCliente.servicioFulbo.MainServidor</mainClass>
+							<Implementation-Version>1.0.0</Implementation-Version>
+							<Created-By>Maven Assembly Plugin</Created-By>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<configuration>
+					<shadedArtifactRelocations>
+						<shadedArtifactRelocation>
+							<groupId>com.example.dependency</groupId>
+							<artifact>my-dependency</artifact>
+							<prefix>com.myproject</prefix>
+							<shadedArtifactArtifactId>shaded-dependency</shadedArtifactArtifactId>
+						</shadedArtifactRelocation>
+					</shadedArtifactRelocations>
+					<mainClass>com.grpcCliente.servicioFulbo.MainServidor</mainClass>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 

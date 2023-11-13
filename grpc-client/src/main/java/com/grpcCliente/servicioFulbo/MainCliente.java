@@ -12,11 +12,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MainCliente {
 
     public static void main(String[] args) {
-        //Logger.getRootLogger().setLevel(Level.OFF);
-
         String host= "localhost";
         int port= 6999;
 
+
+
+        System.out.println();
         System.out.println("Usar ip y puerto por defecto?(1: no, otro: si)");
         int eleccionIp= 0;
         try {
@@ -33,6 +34,7 @@ public class MainCliente {
 
         boolean seguirEjecutando= true;
         while (seguirEjecutando) {
+
             try {
                 MenuCliente client = new MenuCliente(host, port);
                 seguirEjecutando= client.menuPrincipal();
@@ -52,5 +54,6 @@ public class MainCliente {
                     System.out.println();
             }
         }
+        System.exit(0);
     }
 }

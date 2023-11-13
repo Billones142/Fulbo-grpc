@@ -53,10 +53,16 @@ public abstract class ClienteFunciones{
 	
 	protected String enviarPeticion(String peticion){
 		DatosDePeticion datos= servidor.peticionDeDatos(Peticion.newBuilder()
+									.setTo(1)
 									.setMessage(peticion)
 									.build());
 		
 		StringBuilder datosString= new StringBuilder();
+
+		if (datos.getMessageCount() == 1) {
+			datosString.append("No se recibio nada");
+		}
+
 		for (int i = 0; i < datos.getMessageCount(); i++) {
 			datosString.append(datos.getMessage(i) + "\r\n");
 		}
@@ -65,6 +71,6 @@ public abstract class ClienteFunciones{
 	}
 
     protected Iterator<IntegranteSeleccion_gRPC> peticionIntegrantes(){
-        return servidor.peticionDeIntegrantes(Peticion.newBuilder().build());
+        return servidor.peticionDeIntegrantes(Peticion.newBuilder().setTo(1).build());
     }
 }
