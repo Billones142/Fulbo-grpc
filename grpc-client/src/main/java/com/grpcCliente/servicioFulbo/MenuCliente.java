@@ -21,29 +21,36 @@ import com.grpcInterfaces.fulbo.SeleccionAFA_gRPC;
 @GRpcService
 public class MenuCliente extends ClienteFunciones{
 
-	SeleccionAFA_gRPC.Builder seleccionAFA= null;
-	ConsoleEraser eraser;
-	private String respuestaDelServidor= null;
+	private SeleccionAFA_gRPC.Builder seleccionAFA= null;
+	private ConsoleEraser eraser;
+	private String respuestaDelServidorParaMostrar= null;
+	private String mensajeCliente= null;
 
 	/******************************Inicio de menus******************************/
 
 	public boolean menuPrincipal() {
 
-		String mensajeError= "";
+		String mensajeError= null;
 
 		boolean seguirEjecutando= true;
 		while (seguirEjecutando) {
 			borrarTerminal();
 
-			if (!mensajeError.isEmpty()) {
+			if (mensajeError != null) {
 				println("Error: " + mensajeError);
+				mensajeError= null;
 			}
 
-			if (respuestaDelServidor != null) {
+			if (mensajeCliente != null) {
+				println(mensajeCliente);
+				mensajeCliente= null;
+			}
+
+			if (respuestaDelServidorParaMostrar != null) {
 				println( horaFormateada() + "  Respuesta del servidor: " );
-				println(respuestaDelServidor);
+				println(respuestaDelServidorParaMostrar);
 				println();
-				respuestaDelServidor= null;
+				respuestaDelServidorParaMostrar= null;
 			}
 
 			println("Elija una opcion\r\n" + //
@@ -64,7 +71,8 @@ public class MenuCliente extends ClienteFunciones{
 				try {
 					eleccion= consoleInInt();
 					boolean estaEntre3y7= (eleccion > 3) && (eleccion < 7);
-					if ((seleccionAFA == null) && !estaEntre3y7) {
+					boolean noHaySeleccionGuardada= (seleccionAFA == null);
+					if (!(noHaySeleccionGuardada && estaEntre3y7)) {
 						numeroNoValido= false;
 					}
 				} catch (NumberFormatException error) {
@@ -77,7 +85,7 @@ public class MenuCliente extends ClienteFunciones{
 					borrarTerminal();
 
 					println("enviando Ping...");
-					respuestaDelServidor= ping();
+					respuestaDelServidorParaMostrar= ping();
 					menuPrincipal();
 					break;
 
@@ -90,7 +98,7 @@ public class MenuCliente extends ClienteFunciones{
 					break;
 
 				case 4: //Enviar seleccion guardada
-					enviarSeleccion(seleccionAFA);
+					respuestaDelServidorParaMostrar= enviarSeleccion(seleccionAFA);
 					break;
 
 				case 5: //Editar seleccion FIFA guardada localmente
@@ -135,11 +143,11 @@ public class MenuCliente extends ClienteFunciones{
 
 		switch (eleccionPeticion) {
 			case 1:
-				respuestaDelServidor= solicitudLiquidacionDeSueldo();
+				respuestaDelServidorParaMostrar= solicitudLiquidacionDeSueldo();
 				break;
 
 			case 2:
-				respuestaDelServidor= solicitudDeNomina();
+				respuestaDelServidorParaMostrar= solicitudDeNomina();
 				break;
 
 			case 3:
@@ -177,7 +185,7 @@ public class MenuCliente extends ClienteFunciones{
 		int eleccionSueldoNetoJugador= consoleInInt();
 
 		if (eleccionSueldoNetoJugador > 1) {
-			respuestaDelServidor= solicitudSueldoNetoJugador(eleccionSueldoNetoJugador);
+			respuestaDelServidorParaMostrar= solicitudSueldoNetoJugador(eleccionSueldoNetoJugador);
 		}
 	}
 
@@ -188,11 +196,14 @@ public class MenuCliente extends ClienteFunciones{
 		int eleccionModificarPresidente= consoleInInt();
 
 		if (eleccionModificarPresidente == 1) {
+			borrarTerminal();
+			print("Que nombre va a tener el presidente?: ");
 			seleccionAFA.setPresidente(consoleIn());
 			println();
 		}
 
-		print("Quiere editar los integrantes?(1:si, otro,no): ");
+		borrarTerminal();
+		print("Quiere editar los integrantes?(1:si, otro:no): ");
 		int eleccionEdicionIntegrantes= consoleInInt();
 
 		if (eleccionEdicionIntegrantes == 1) {
@@ -200,12 +211,13 @@ public class MenuCliente extends ClienteFunciones{
 		}
 	}
 
-	private void menuEditarIntegrantes() {
+	private void menuEditarIntegrantes() { //TODO
 		borrarTerminal();
 		println("Elija una opcion:\r\n" + //
 							"1. Volver\r\n" +
 							"2. Agregar integrante");
-		for (int i = 0; i < seleccionAFA.getSeleccionadoCount(); i++) {
+		int cantidadDeIntegrantes= seleccionAFA.getSeleccionadoCount();
+		for (int i = 0; i < cantidadDeIntegrantes; i++) {
 			IntegranteSeleccion_gRPC integrante= seleccionAFA.getSeleccionado(i);
 			
 			String nombre= integrante.getNombre();
@@ -231,24 +243,27 @@ public class MenuCliente extends ClienteFunciones{
 			}else if (integrante.hasMasajista()) {
 				println("Masajista, con un titulo como " + integrante.getMasajista());
 			}
+		}
+		
+		int eleccionEdicionIntegrante= 1;
 
-			int eleccionEdicionIntegrante= 1;
+		boolean numeroNoValido= true;
+		while (numeroNoValido) {
 			try {
 				eleccionEdicionIntegrante= consoleInInt();
+				numeroNoValido= false;
 			} catch (Exception e) {
 				println("numero no valido");
 			}
-
-			if (eleccionEdicionIntegrante == 2) {
-				menuAgregarIntegrante();
-			}else if (eleccionEdicionIntegrante > 2) {
-				menuAgregarIntegrante();
-			}else if (eleccionEdicionIntegrante > 2) {
-				menuEditarIntegrante(eleccionEdicionIntegrante-2);
-			}else{
-				println("eleccion no valida");
-				menuEditarIntegrantes();
-			}
+		}
+		
+		if (eleccionEdicionIntegrante == 2) {
+			menuAgregarIntegrante();
+		}else if (eleccionEdicionIntegrante > 2) {
+			menuEditarIntegrante(eleccionEdicionIntegrante-2);
+		}else{
+			println("eleccion no valida");
+			menuEditarIntegrantes();
 		}
 	}
 	
@@ -276,7 +291,7 @@ public class MenuCliente extends ClienteFunciones{
 				seguirAgregandoIntegrantes= false;
 			}
 		}
-		println();
+		borrarTerminal();
 
 
 		println("termino de ingresar los datos para su nueva seleccion, quiere enviarla al servidor?\r\n" + //
@@ -287,10 +302,10 @@ public class MenuCliente extends ClienteFunciones{
 
 		if (eleccionEnviarSeleccion == 1) {
 			seleccionAFA= nuevaSeleccion;
-			String respuestaServer= enviarSeleccion(nuevaSeleccion);
-			println("respuesta del servidor" + respuestaServer);
+			String respuestaServerSeleccionEnviada= enviarSeleccion(nuevaSeleccion);
+			respuestaDelServidorParaMostrar = respuestaServerSeleccionEnviada;
 		}else if (eleccionEnviarSeleccion == 2) {
-			println("los datos quedaran guardados, puede borrarlos si quiere");
+			mensajeCliente= "los datos de la seleccion quedaron guardados";
 		}
 	}
 
@@ -385,24 +400,23 @@ public class MenuCliente extends ClienteFunciones{
 		eraser.addIgnoreClass(System.class);
 		eraser.start();
 	}
-	
+
 	/******************************Fin de menus******************************/
 
-	
 
 	private String horaFormateada(){
 		Instant instant = Instant.now();
         ZoneId zoneId = ZoneId.systemDefault();
 		LocalDateTime localDateTime = instant.atZone(zoneId).toLocalDateTime();
-
+		
 		int hora= localDateTime.getHour();
 		int minuto= localDateTime.getMinute();
 		int segundo= localDateTime.getSecond();
-
+		
 		String horaConFormato= (hora >= 10? ""+hora : "0"+hora);
 		String minutoConFormato= (minuto >= 10? ""+minuto:"0"+minuto);
 		String segundoConFormato= (segundo >= 10 ? ""+segundo:"0"+segundo);
-
+		
 		return horaConFormato+":" + minutoConFormato + ":" + segundoConFormato;
 	}
 

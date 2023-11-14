@@ -12,11 +12,13 @@ import com.grpcInterfaces.fulbo.ServicioFulboGrpc;
 import io.grpc.Channel;
 import io.grpc.ManagedChannelBuilder;
 
+/**
+     * clase abstracta que contiene todos los metodos necesarios para comunicarse con el servidor
+     * para usarla solo hay que crear otra clase que herede esta
+     */
 public abstract class ClienteFunciones{
     private Channel channel;
     private ServicioFulboGrpc.ServicioFulboBlockingStub servidor;
-
-    
 
     public ClienteFunciones(String host, int port) {
         super();
